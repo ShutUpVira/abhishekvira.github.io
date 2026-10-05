@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How This System Works — NIFTY Forecasting Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+  :root {
+    --paper: #eef1f3;
+    --paper-card: #f8faf9;
+    --ink: #1c2430;
+    --ink-soft: #4a5568;
+    --teal: #0e6e5e;
+    --teal-deep: #0a4f43;
+    --amber: #b8860b;
+    --line: #d4dadd;
+    --code-bg: #e4e9ea;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --serif: 'IBM Plex Serif', serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.7;
+  }
+  .layout { display: flex; max-width: 1400px; margin: 0 auto; }
+  nav.toc {
+    width: 260px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 40px 20px 40px 32px;
+    border-right: 1px solid var(--line);
+  }
+  nav.toc .toc-title {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-deep);
+    margin-bottom: 18px;
+  }
+  nav.toc a {
+    display: block;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: 5px 0;
+    border-left: 2px solid transparent;
+    padding-left: 10px;
+    margin-left: -12px;
+  }
+  nav.toc a:hover { color: var(--teal-deep); border-left-color: var(--teal); }
+  main { flex: 1; min-width: 0; padding: 56px 64px 120px; }
+  @media (max-width: 900px) {
+    nav.toc { display: none; }
+    main { padding: 32px 24px 80px; }
+  }
+
+  .hero {
+    margin-bottom: 56px;
+  }
+  .hero .eyebrow {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.1em;
+    color: var(--teal-deep);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1.15;
+    margin: 0 0 18px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .hero p.lede {
+    font-family: var(--serif);
+    font-size: 19px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  section { margin-bottom: 64px; scroll-margin-top: 24px; }
+  h2 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    margin: 0 0 22px;
+  }
+  h2 .num {
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--teal);
+    font-weight: 600;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 19px;
+    color: var(--ink);
+    margin: 30px 0 12px;
+  }
+  p { margin: 0 0 16px; }
+  a { color: var(--teal-deep); }
+  code, .filename {
+    font-family: var(--mono);
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: var(--teal-deep);
+  }
+  pre {
+    font-family: var(--mono);
+    background: var(--ink);
+    color: #d7e4e0;
+    padding: 16px 18px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .callout {
+    background: var(--paper-card);
+    border-left: 4px solid var(--teal);
+    padding: 16px 20px;
+    border-radius: 0 6px 6px 0;
+    margin: 20px 0;
+    font-size: 15.5px;
+  }
+  .callout.amber { border-left-color: var(--amber); }
+  .callout .label {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal-deep);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .callout.amber .label { color: var(--amber); }
+
+  .diagram-card {
+    background: var(--paper-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px 24px;
+    margin: 24px 0;
+  }
+  .diagram-card .mermaid { display: flex; justify-content: center; }
+  .diagram-caption {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 15px;
+    font-family: var(--sans);
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    font-weight: 600;
+    color: var(--teal-deep);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--ink);
+  }
+  tr:hover td { background: rgba(14,110,94,0.04); }
+
+  .file-group {
+    display: inline-block;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--teal-deep);
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin: 24px 0 6px;
+  }
+
+  ul, ol { padding-left: 22px; margin: 0 0 16px; }
+  li { margin-bottom: 8px; }
+
+  .divider {
+    height: 1px;
+    background: var(--line);
+    margin: 56px 0;
+  }
+
+  footer {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-top: 60px;
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <a href="#tldr">0 · The One-Paragraph Version</a>
+  <a href="#running">1 · Three Ways to Run It</a>
+  <a href="#architecture">2 · System Architecture</a>
+  <a href="#pipeline">3 · The Daily Pipeline</a>
+  <a href="#filemap">4 · File Map</a>
+  <a href="#dashboard">5 · Dashboard, Tab by Tab</a>
+  <a href="#concepts">6 · Core Concepts, No Jargon</a>
+  <a href="#report">7 · Inside report.md</a>
+  <a href="#evidence">8 · What Real Data Has Shown So Far</a>
+  <a href="#optimize">9 · How This Can Be Improved</a>
+</nav>
+
+<main>
+  <div class="hero">
+    <div class="eyebrow">System Reference — Written for the person who built this, not a general audience</div>
+    <h1>How This System Works</h1>
+    <p class="lede">A plain-language map of every moving part: what runs when, what each file is responsible for,
+    what the concepts actually mean, and what's worth improving next. No assumed background — if a term needs
+    jargon, it gets explained the moment it's used.</p>
+  </div>
+
+  <section id="tldr">
+    <h2><span class="num">00</span> The One-Paragraph Version</h2>
+    <p>Every day, this system downloads the latest NIFTY 50 prices, hands them to four different
+    "guessers" (a plain no-change guess, a straight-line fit, a tree-based model, and a neural network)
+    who each predict tomorrow's full candle — Open, High, Low, Close — and separately, tomorrow's percent
+    move. Rather than trusting any one guesser by default, it tests all four fairly on years of real
+    held-out history and only lets the one that's actually earned it make today's call. That prediction
+    becomes an options trade idea. Every prediction gets written down, and — this is the important part —
+    checked against what actually happens once the next real day arrives, building an honest, permanent
+    track record instead of a one-time guess.</p>
+  </section>
+
+  <section id="running">
+    <h2><span class="num">01</span> Three Ways to Run It</h2>
+    <p>Everything in this project is reachable through one of three entry points. You'll use the first one
+    almost every day; the other two are occasional, deliberate actions.</p>
+    <table>
+      <tr><th>Command / Action</th><th>What it does</th><th>Typical time</th><th>Use it when</th></tr>
+      <tr>
+        <td><code>run_dashboard.bat</code><br>(or <code>streamlit run dashboard.py</code>)</td>
+        <td>Opens the full browser control panel — every other piece of this system is reachable from inside it.</td>
+        <td>Opens instantly; individual actions inside it vary</td>
+        <td>This is your default. Almost everything below happens through here.</td>
+      </tr>
+      <tr>
+        <td><code>python train.py</code></td>
+        <td>Runs the exact same daily pipeline as the dashboard's "Run Forecast" button, but prints to your terminal instead of a browser.</td>
+        <td>1–3 minutes (longer on a scheduled full retrain)</td>
+        <td>Automated scheduling (Task Scheduler), or when you just want the numbers without opening a browser.</td>
+      </tr>
+      <tr>
+        <td><code>python walk_forward.py</code></td>
+        <td>Runs the deep, day-by-day historical validation across all 6 model/target combinations.</td>
+        <td>~35–45 minutes for all six</td>
+        <td>Occasionally — after a real code change, or when you want rigorous evidence, not a routine check.</td>
+      </tr>
+    </table>
+    <div class="callout">
+      <span class="label">Worth knowing</span>
+      <code>train.py</code> and <code>walk_forward.py</code> are also both reachable as buttons inside the
+      dashboard now — you don't strictly need a separate terminal for either one anymore.
+    </div>
+  </section>
+
+  <section id="architecture">
+    <h2><span class="num">02</span> System Architecture</h2>
+    <p>At the highest level, information flows in one direction: raw market data comes in, a decision comes
+    out, and that decision gets checked against reality once it's known.</p>
+    <div class="diagram-card">
+      <div class="mermaid">
+flowchart LR
+    A(["Yahoo Finance<br/>NIFTY · VIX · ETF Volume"]) --> B["data.py<br/>fetches the raw numbers"]
+    B --> C["features.py<br/>builds 20-day windows +<br/>technical indicators"]
+    C --> D{"4 models compete:<br/>Naive · Linear · XGBoost · LSTM"}
+    D --> E["Fair winner picked<br/>(Naive can't win the vote)"]
+    E --> F["Tomorrow's candle<br/>prediction"]
+    E --> G["options_module.py<br/>turns it into a trade idea"]
+    F --> H["tracking.py<br/>logs the prediction"]
+    G --> H
+    H --> I["Next real day:<br/>reconciled against what<br/>actually happened"]
+    I --> J["reporting.py<br/>writes report.md"]
+      </div>
+      <div class="diagram-caption">The full loop, start to finish — one day's worth of work.</div>
+    </div>
+  </section>
+
+  <section id="pipeline">
+    <h2><span class="num">03</span> The Daily Pipeline, Step by Step</h2>
+    <p>This is what actually happens inside <code>train.py</code>'s <code>run_pipeline()</code> — the
+    function behind both the dashboard's "Run Forecast" button and a plain <code>python train.py</code>.</p>
+    <div class="diagram-card">
+      <div class="mermaid">
+flowchart TD
+    A["Fetch the latest data"] --> B["Build feature windows<br/>(20 past days -> predict day 21)"]
+    B --> C["Hold out the most recent<br/>7 years (1,764 days)"]
+    C --> D["Train each model on<br/>everything BEFORE the holdout"]
+    D --> E["Score all 4 fairly on the<br/>untouched holdout days"]
+    E --> F["Pick the winner<br/>(lowest error — Naive excluded)"]
+    F --> G["Fold the holdout back in<br/>(now that the real outcomes are known)"]
+    G --> H["Predict tomorrow<br/>from the winning model"]
+    H --> I["Build an options strategy<br/>from that prediction"]
+    I --> J["Log every model's guess,<br/>not just the winner's"]
+    J --> K["Reconcile any earlier<br/>predictions now resolved"]
+    K --> L["Regenerate report.md"]
+      </div>
+      <div class="diagram-caption">Twelve steps, same order, every single run.</div>
+    </div>
+    <div class="callout">
+      <span class="label">Why "hold out, then fold back in" instead of just training on everything</span>
+      If a model is tested on the same data it learned from, that test proves nothing — like grading
+      someone on an exam they already saw the answer key for. Holding out real days it hasn't seen yet,
+      scoring it there, and only afterward letting it learn from them keeps the test honest.
+    </div>
+  </section>
+
+  <section id="filemap">
+    <h2><span class="num">04</span> File Map — What Each Piece of Code Does</h2>
+    <div class="diagram-card">
+      <div class="mermaid">
+flowchart TB
+    subgraph DATA["Data &amp; Features"]
+        data["data.py"]
+        features["features.py"]
+    end
+    subgraph MODELS["The Models"]
+        baseline["baseline.py"]
+        xgb["model_xgboost.py"]
+        lstm["model_lstm.py"]
+        pct["pct_models.py"]
+        ro["returns_only.py"]
+    end
+    subgraph DECIDE["Decision-Making"]
+        train["train.py"]
+        opt["options_module.py"]
+    end
+    subgraph MEMORY["Memory &amp; Honesty"]
+        track["tracking.py"]
+        report["reporting.py"]
+    end
+    subgraph VALIDATE["Validation Tools"]
+        wf["walk_forward.py"]
+        multi["multi_day_forecast.py"]
+    end
+    subgraph UI["The Interface"]
+        dash["dashboard.py"]
+    end
+    DATA --> MODELS
+    MODELS --> train
+    train --> opt
+    train --> track
+    track --> report
+    dash --> train
+    dash --> wf
+    dash --> report
+    wf --> MODELS
+    multi --> MODELS
+      </div>
+      <div class="diagram-caption">Grouped by role — data in, models compete, a decision gets made, everything gets remembered.</div>
+    </div>
+
+    <div class="file-group">Data &amp; Features</div>
+    <table>
+      <tr><td><code>data.py</code></td><td>Downloads NIFTY OHLC, India VIX, and ETF trading volume from Yahoo Finance — free, no key needed.</td></tr>
+      <tr><td><code>features.py</code></td><td>Turns raw prices into 20-day windows, scales everything so decades of price history are comparable, and adds RSI/MACD/ATR/moving-average/Bollinger-width indicators.</td></tr>
+    </table>
+
+    <div class="file-group">The Models</div>
+    <table>
+      <tr><td><code>baseline.py</code></td><td>The Naive guess ("tomorrow = today") and Linear Regression — the two simplest models, used as an honesty check.</td></tr>
+      <tr><td><code>model_xgboost.py</code></td><td>XGBoost — a tree-based model that finds threshold rules ("if RSI above 70 and...").</td></tr>
+      <tr><td><code>model_lstm.py</code></td><td>The LSTM neural network — reads the 20-day window like a sentence, keeping a running memory.</td></tr>
+      <tr><td><code>pct_models.py</code></td><td>Versions of Linear/XGBoost/LSTM trained to predict ONLY the % move, not a full candle.</td></tr>
+      <tr><td><code>returns_only.py</code></td><td>An even more stripped-down version — input is ONLY the past sequence of % moves, nothing else.</td></tr>
+    </table>
+
+    <div class="file-group">Decision-Making</div>
+    <table>
+      <tr><td><code>train.py</code></td><td>The orchestrator. Runs the whole daily pipeline described in Section 3.</td></tr>
+      <tr><td><code>options_module.py</code></td><td>Turns a predicted move into a specific options strategy (spread, condor, straddle), using Black-Scholes pricing.</td></tr>
+    </table>
+
+    <div class="file-group">Memory &amp; Honesty</div>
+    <table>
+      <tr><td><code>tracking.py</code></td><td>Logs every model's daily prediction, and reconciles past predictions against real outcomes once known.</td></tr>
+      <tr><td><code>reporting.py</code></td><td>Turns the reconciled log into <code>report.md</code> — a written document, not just a table.</td></tr>
+    </table>
+
+    <div class="file-group">Validation Tools</div>
+    <table>
+      <tr><td><code>walk_forward.py</code></td><td>Simulates living through the last 7 years one real day at a time — the most rigorous test in the project.</td></tr>
+      <tr><td><code>multi_day_forecast.py</code></td><td>A 10-trading-day-ahead view, using two different methods (see Section 6).</td></tr>
+    </table>
+
+    <div class="file-group">The Interface</div>
+    <table>
+      <tr><td><code>dashboard.py</code></td><td>The browser control panel — calls into all of the above.</td></tr>
+    </table>
+  </section>
+
+  <section id="dashboard">
+    <h2><span class="num">05</span> Dashboard, Tab by Tab</h2>
+    <div class="diagram-card">
+      <div class="mermaid">
+flowchart LR
+    U["You, in the browser"] --> T1["Run Forecast"]
+    U --> T2["Model Scoreboard"]
+    U --> T3["Walk-Forward"]
+    U --> T4["Raw Log"]
+    U --> T5["Try Your Own Numbers"]
+    T1 --> P1["train.run_pipeline()<br/>+ multi_day_forecast.py"]
+    T2 --> P2["tracking.compute_scoreboard()<br/>+ reporting.generate_report()"]
+    T3 --> P3["walk_forward.py's<br/>six functions"]
+    T4 --> P4["reads predictions_log.csv<br/>directly, no computation"]
+    T5 --> P5["options_module.suggest_strategy()<br/>directly — no training at all"]
+      </div>
+      <div class="diagram-caption">What actually runs behind each tab.</div>
+    </div>
+    <table>
+      <tr><th>Tab</th><th>What you click</th><th>What happens</th></tr>
+      <tr><td><strong>▶️ Run Forecast</strong></td><td>"Run Full Forecast"</td><td>The full daily pipeline (Section 3) plus a 10-day-ahead view, sharing one data fetch. This is the one you'll use most.</td></tr>
+      <tr><td><strong>🏆 Model Scoreboard</strong></td><td>Loads automatically</td><td>Shows the real, live track record — every model's predictions vs what actually happened, accumulated over real days. Includes the report download button.</td></tr>
+      <tr><td><strong>🔬 Walk-Forward</strong></td><td>"Run Walk-Forward Validation"</td><td>The deep historical test from Section 1's table. Pick all 6 models or just one family from the dropdown first.</td></tr>
+      <tr><td><strong>📜 Raw Log</strong></td><td>Loads automatically</td><td>Every prediction ever made, reconciled or not, as a plain table — no analysis, just the raw record.</td></tr>
+      <tr><td><strong>🧪 Try Your Own Numbers</strong></td><td>Type in numbers, "Suggest a strategy"</td><td>Feed in a hypothetical spot/predicted-close/VIX and see what strategy comes out — instant, no model training involved.</td></tr>
+    </table>
+  </section>
+
+  <section id="concepts">
+    <h2><span class="num">06</span> Core Concepts, Explained Without Jargon</h2>
+
+    <h3>What "training" a model actually means</h3>
+    <p>A model starts out knowing nothing — its internal numbers are close to random. Training is a loop:
+    show it a real example, let it guess, tell it how wrong the guess was, and nudge its internal numbers
+    slightly in the direction that would have made the guess better. Do that enough times over enough
+    examples, and the nudges add up to something that's actually learned a pattern.</p>
+
+    <h3>Why raw prices never get fed in directly</h3>
+    <p>NIFTY was around 5,000 a decade ago and around 24,000 now. A model fed raw prices would waste effort
+    learning "what year is this" instead of learning real candle-to-candle behavior. Every price gets
+    expressed as a ratio to a recent reference point instead — "1.02" always means "2% above where we
+    started," in any year.</p>
+
+    <h3>The four models — four different ways of thinking</h3>
+    <table>
+      <tr><th>Model</th><th>How it actually thinks</th></tr>
+      <tr><td><strong>Naive</strong></td><td>No thinking at all — "tomorrow will look like today." Exists purely as the honesty check every other model has to beat.</td></tr>
+      <tr><td><strong>Linear Regression</strong></td><td>Fits the simplest possible straight-line relationship between the inputs and the answer.</td></tr>
+      <tr><td><strong>XGBoost</strong></td><td>Builds a sequence of decision trees, each one correcting the previous trees' mistakes — good at finding threshold rules like "if RSI is high AND the market has been falling."</td></tr>
+      <tr><td><strong>LSTM</strong></td><td>A neural network that reads the 20-day window like a sentence, keeping a running "memory" of what it's seen so far.</td></tr>
+    </table>
+
+    <h3>Why predict the % move separately from the candle</h3>
+    <p>The % move is normally only ever <em>derived</em> after the fact from a model's predicted Close. The
+    "direct" and "returns-only" tracks instead train a model whose <em>only</em> job is that one number — no
+    Open/High/Low to also get right. This tests whether specializing helps, versus asking one model to do
+    everything at once.</p>
+
+    <h3>Three different kinds of testing — don't confuse them</h3>
+    <table>
+      <tr><th></th><th>Fair Backtest</th><th>Walk-Forward</th><th>Live Tracking</th></tr>
+      <tr><td><strong>Answers</strong></td><td>"Is this model good, tested once on a big held-out block?"</td><td>"Would this have worked, living through it day by day?"</td><td>"Is it actually working, right now, for real?"</td></tr>
+      <tr><td><strong>Data</strong></td><td>Real past data, one big split</td><td>Real past data, ~1,750 small sequential tests</td><td>Real, live, still unfolding</td></tr>
+      <tr><td><strong>Speed</strong></td><td>Part of every daily run</td><td>~35–45 minutes</td><td>Grows one real day at a time</td></tr>
+      <tr><td><strong>Where</strong></td><td>Run Forecast tab</td><td>Walk-Forward tab</td><td>Model Scoreboard tab</td></tr>
+    </table>
+
+    <h3>The options strategies, in plain terms</h3>
+    <ul>
+      <li><strong>Bull Call Spread / Bear Put Spread</strong> — a directional bet: "I think it's going up" (or down), sized to limit both the cost and the maximum loss.</li>
+      <li><strong>Iron Condor</strong> — a bet that the market stays calm; profits if the price doesn't move much.</li>
+      <li><strong>Long Straddle</strong> — a bet that something big is coming, without knowing which direction.</li>
+    </ul>
+    <p>Which one gets suggested depends on comparing the winning model's predicted move against what
+    India VIX implies is "normal" for that many days.</p>
+
+    <h3>Why Naive is shown everywhere but can never win</h3>
+    <p>Naive always predicts "no change" — which, fed into the strategy engine, unconditionally produces an
+    Iron Condor, regardless of what's actually likely. It stays in every comparison as the honesty floor,
+    but it's excluded from actually being picked to drive the live prediction, for exactly that reason.</p>
+  </section>
+
+  <section id="report">
+    <h2><span class="num">07</span> Inside report.md — A Guided Tour</h2>
+    <table>
+      <tr><th>Section</th><th>What it's telling you</th></tr>
+      <tr><td><strong>Summary Scoreboard</strong></td><td>Each model's average error and direction accuracy, over every real reconciled day so far.</td></tr>
+      <tr><td><strong>Largest single-day misses</strong></td><td>Each model's worst 3 days — where it's most worth asking "what happened here?"</td></tr>
+      <tr><td><strong>Strategy call accuracy</strong></td><td>Was the actual TRADE IDEA right, not just the price guess — plus an estimated ₹ profit/loss for each call.</td></tr>
+      <tr><td><strong>% Move Scoreboard</strong></td><td>Same idea as the summary scoreboard, but for the direct-% and returns-only tracks.</td></tr>
+      <tr><td><strong>Per-day detail</strong></td><td>Every model's exact claim, sitting right next to what actually happened — the raw ground truth everything else is built from.</td></tr>
+      <tr><td><strong>Walk-Forward Validation</strong></td><td>A summary of the last time you ran the deep historical test — can be older than the rest of the report, since it's not run daily.</td></tr>
+    </table>
+    <div class="callout amber">
+      <span class="label">A deliberate limitation</span>
+      This report only states facts — predicted X, actual Y, off by Z. It never guesses at <em>why</em>
+      something went wrong. That interpretation is left to whoever reads it (you, or an LLM you hand it to).
+    </div>
+  </section>
+
+  <section id="evidence">
+    <h2><span class="num">08</span> What Real Data Has Shown So Far</h2>
+    <p>A few genuine, evidence-backed findings from the first real days of live tracking:</p>
+    <ul>
+      <li><strong>LSTM showed a consistent bias</strong> — every real day, it predicted a noticeably wider
+      candle than what happened, overshooting Close by roughly 2.6–3.7%, every single time. Traced to a
+      real training weakness (full-batch gradient descent meant "150 epochs" was really just 150 total
+      update steps) and fixed with mini-batch training — not yet confirmed on new real data whether this
+      resolved it.</li>
+      <li><strong>Linear Regression has been a strong, cheap performer</strong> — the lowest Close error of
+      all four models across the first several tracked days.</li>
+      <li><strong>Every real day so far has been unusually calm</strong> — so the strategy engine hasn't yet
+      been tested on a genuinely volatile day, which is the scenario that matters most.</li>
+    </ul>
+  </section>
+
+  <section id="optimize">
+    <h2><span class="num">09</span> How This Can Be Improved</h2>
+    <p>Ranked roughly by how much it would actually move the needle, not by how interesting it sounds:</p>
+    <ol>
+      <li><strong>Connect walk-forward evidence to daily model selection.</strong> Right now walk-forward is
+      purely informational — it never changes what tomorrow's forecast does. Closing that loop, carefully,
+      is the next real step (see below).</li>
+      <li><strong>Let the live Model Scoreboard mature.</strong> Every real day genuinely adds new evidence;
+      no shortcut replaces this.</li>
+      <li><strong>Test the log-return target formulation</strong> — an open question raised early on and
+      never actually tried: does predicting log-returns instead of simple ratios change accuracy?</li>
+      <li><strong>Feature importance for XGBoost</strong> (e.g. SHAP) — since it's currently the strongest
+      tree-based performer, understanding which inputs it actually relies on could guide what to add or
+      drop.</li>
+      <li><strong>A confidence-based "no trade" threshold</strong> — right now a strategy always gets
+      suggested; letting the system say "not confident enough to trade today" when models disagree sharply
+      is a natural extension.</li>
+      <li><strong>More cross-market context</strong> (e.g. S&amp;P 500 overnight return) — discussed early
+      on, deliberately deferred to avoid overfitting an already-small dataset.</li>
+    </ol>
+  </section>
+
+  <footer>
+    Generated as a reference document for the NIFTY forecasting project. Reflects the system's structure
+    as of this write-up — check the README in the project folder for anything that's changed since.
+  </footer>
+</main>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#f8faf9',
+      primaryTextColor: '#1c2430',
+      primaryBorderColor: '#0e6e5e',
+      lineColor: '#4a5568',
+      secondaryColor: '#e4e9ea',
+      tertiaryColor: '#eef1f3',
+      fontFamily: 'IBM Plex Sans, sans-serif',
+      fontSize: '15px'
+    },
+    flowchart: { curve: 'basis', padding: 16 }
+  });
+</script>
+</body>
+</html>

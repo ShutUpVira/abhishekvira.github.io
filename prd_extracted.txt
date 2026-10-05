@@ -1,0 +1,198 @@
+PRD: Abhishek Vira Personal Website
+An 8-bit personal world built for exploration
+1. Product Overview
+Build a personal website for Abhishek Vira that feels like entering a small 8-bit world rather than visiting a traditional portfolio.
+Core idea: the homepage is an interactive 8-bit map. The visitor controls a small pixel character and explores different locations to discover what Abhishek does.
+The experience should be fun, colorful, intuitive, and extremely easy to navigate. It should feel inspired by classic Pokémon-era 8-bit games without directly copying Pokémon assets, characters, maps, fonts, or copyrighted visual elements.
+The website will be hosted on GitHub Pages, so the implementation should be static and require no paid hosting or backend.
+2. Core Experience
+Homepage = Interactive 8-bit world
+When someone lands on the website, they see a small pixel-art world containing recognizable locations/buildings such as Music House, The Lab, Run Club, Merch Shop, Services, and Me.
+The map should feel visually interesting and polished, with grass, roads, trees, buildings, signs, water, and small environmental details.
+3. Navigation
+Desktop
+Mouse cursor: preferred interaction; the character moves toward/around the cursor.
+WASD movement.
+Arrow-key movement.
+The character should have simple walking animations.
+Mobile
+Use an on-screen four-direction controller.
+Controls must be large enough for comfortable thumb use.
+The map must remain easy to understand and navigate.
+First-load instruction: “Explore around. Walk into a place to see what I do.” This can disappear after a few seconds or after the first movement.
+4. Entering Locations
+When the character reaches a building, the building becomes highlighted.
+A small prompt appears, e.g. “ENTER MUSIC HOUSE” or “PRESS ENTER.”
+Clicking/tapping the location should also work.
+Use a short pixel-art transition: character approaches door → door opens → brief transition → section loads. Keep it fast, approximately 300–700 ms.
+5. Main Locations
+🎵 Music — MUSIC HOUSE
+Artist introduction
+Music releases
+Spotify / Apple Music / YouTube / other streaming links
+Music videos
+Upcoming shows
+Past shows
+Artist imagery
+Social links
+Merch connection
+Music should be immediately accessible. Upcoming shows can live on the Music page.
+🏃 Run Club — RUN CLUB
+What the run club is
+Upcoming runs
+Previous runs
+Photos
+Locations
+How to join
+Social links
+Special events such as surf trips
+Tone should feel like a community hub rather than a corporate fitness page.
+💻 Builds — THE LAB
+Apps
+Websites
+Experiments
+Other interesting projects
+Each project should have a name, short description, and clear Open/Visit action. Embed projects directly where practical. The feeling should be “I make weird/useful things,” not a conventional developer portfolio.
+👕 Merch — MERCH SHOP
+Product image
+Name
+Price
+Short description
+Purchase button
+Use embedded products or links to the external store/payment system. The site itself does not need an e-commerce backend.
+✦ Services — SERVICES
+Marketing & Growth: marketing, growth, positioning, digital presence, content.
+Artist / Creator Support: artist marketing, content, strategy, digital presence, growth.
+Consulting: general strategy, business, and growth consulting.
+This section can be slightly more professional while still fitting the overall world. Include a clear “Need help with something? Let’s talk.” CTA.
+👤 About — ME
+Short biography
+Photo/avatar
+Music
+Work
+Things built
+Previous experiences
+Current interests
+Keep it personal and conversational rather than résumé-like. Optionally use an 8-bit timeline to show different chapters of Abhishek’s life.
+6. Visual Direction
+Overall aesthetic: 8-bit / pixel-art adventure game, combined with modern web design.
+Bright, playful color palette
+Grass, roads, trees, buildings, water, signs, characters
+Small animated environmental details
+Clean typography and spacing
+No visual clutter
+The goal is not to recreate Pokémon. It should feel like a retro game-inspired personal website with its own visual identity.
+7. Key Design Principle
+The website should not feel like a game that happens to contain a portfolio. It should feel like a personal website disguised as a tiny game.
+The map is the primary navigation. A subtle fallback menu should always be available with Music, Run Club, Builds, Merch, Services, and About.
+8. Mobile UX
+No horizontal scrolling
+Large touch targets
+D-pad remains accessible
+Character remains visible
+Locations remain identifiable
+Content pages are normal responsive web pages
+Camera/view may follow the character if the map is larger than the screen
+Do not require users to play the game to access content
+9. Desktop UX
+Preferred flow: move cursor → character moves → character approaches building → building highlights → enter prompt → click/press Enter → section opens.
+Keyboard controls should remain available.
+10. Sound
+Do not autoplay music.
+If sound is added, start muted.
+Provide a visible sound toggle.
+Optional ambient 8-bit sounds and walking/interaction sounds.
+11. Technical Requirements
+Host on GitHub Pages.
+Static website; no backend required.
+HTML/CSS/JavaScript preferred.
+React/Vite is acceptable if it simplifies development.
+Avoid unnecessary complexity, paid hosting, databases, authentication, CMS, or server-side rendering.
+External links and embeds are allowed.
+12. Code Architecture
+Keep the project modular. A possible structure:
+/├── index.html├── assets/│   ├── sprites/│   ├── environment/│   ├── music/│   └── merch/├── css/│   ├── main.css│   ├── map.css│   └── pages.css├── js/│   ├── game.js│   ├── player.js│   ├── map.js│   ├── navigation.js│   └── data.js└── pages/    ├── music    ├── run-club    ├── builds    ├── merch    ├── services    └── about
+13. Performance
+Optimize for mobile connections and GitHub Pages.
+Keep assets small.
+Optimize images.
+Lazy-load nonessential images where appropriate.
+Keep JavaScript dependencies minimal.
+Interactive homepage should feel responsive immediately.
+14. Accessibility
+Keyboard navigation
+Accessible labels
+Visible focus states
+Text alternatives where appropriate
+Reduced-motion option
+Normal navigation fallback
+Users should never be trapped inside the game-like interface
+15. Content System
+Content that changes regularly should be stored in simple data objects rather than hard-coded throughout the UI. This is especially important for shows, music releases, projects, merch, and Run Club events.
+Example structure: shows should contain date, venue, city, and link. The exact implementation can be chosen by Claude.
+16. Homepage Flow
+1. Landing: the pixel world appears with the character in a central area.
+2. Introduction: “HEY. I’M ABHISHEK. THIS IS MY LITTLE CORNER OF THE INTERNET. GO HAVE A LOOK AROUND.”
+3. Exploration: the visitor moves around the map.
+4. Discovery: buildings have recognizable names/icons.
+5. Entry: a short transition takes the visitor into a section.
+6. Content: the destination uses a modern, responsive layout.
+7. Return: a “← BACK TO THE WORLD” action returns the visitor to the map.
+17. Easter Eggs
+Hidden NPC with a silly message
+Random tree/object interactions
+Secret location
+Funny character responses
+Interaction that changes after repeated clicks
+Hidden “???” location
+Small references to Abhishek’s songs
+Easter eggs should reward exploration but never be necessary for navigation.
+18. Tone
+The site should feel: funny, creative, slightly chaotic, personal, unfiltered, colorful, curious, and human.
+Avoid: corporate language, generic portfolio layouts, unnecessary minimalism, over-design, SaaS-style landing pages, and conventional résumé presentation.
+19. MVP
+Interactive 8-bit homepage/map
+Player character
+Desktop movement
+Mobile D-pad
+Collision detection
+Interactive buildings
+Location prompts
+Page transitions
+Music page
+Run Club page
+Builds page
+Merch page
+Services page
+About page
+Back-to-map navigation
+Simple fallback menu
+20. Future Enhancements
+NPCs
+More elaborate animations
+Day/night cycle
+Weather
+Achievements
+Hidden areas
+Sound effects
+Animated environmental objects
+Interactive résumé
+Guestbook
+Mini-games
+Do not build these into V1 unless they are trivial to implement.
+21. Definition of Done
+A first-time visitor understands what the website is within 5 seconds.
+They can figure out how to move without instructions.
+They can explore the map.
+They understand what each building represents.
+They can enter any section easily.
+They can find Abhishek’s music within two interactions.
+They can find upcoming shows.
+They can find the Run Club.
+They can see things Abhishek has built.
+They can find merchandise.
+They can understand his services.
+They can read about him.
+They can return to the main world at any time.
+The entire website works comfortably on a phone.
+Most importantly: the site should make someone want to poke around just to see what happens.

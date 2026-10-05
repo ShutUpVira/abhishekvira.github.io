@@ -1,0 +1,257 @@
+/* ==========================================================================
+   Abhishek Vira - 8-Bit World Map & Canvas Viewport Styling
+   ========================================================================== */
+
+#map-viewport {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #2b75d6; /* Water color fallback */
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+#world-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* --- Welcome Hint Banner --- */
+#welcome-banner {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  border: 2px solid #00f5d4;
+  box-shadow: 0 0 20px rgba(0, 245, 212, 0.25), 4px 4px 0 #000;
+  border-radius: 6px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 500;
+  max-width: 90%;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: auto;
+}
+
+#welcome-banner.fade-out {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-20px);
+  pointer-events: none;
+}
+
+.welcome-avatar {
+  font-size: 24px;
+  background: #1e293b;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: 1px solid #334155;
+  flex-shrink: 0;
+}
+
+.welcome-text h4 {
+  font-family: var(--font-retro);
+  font-size: 9px;
+  color: #00f5d4;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.welcome-text p {
+  font-size: 13px;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+
+.welcome-dismiss {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.welcome-dismiss:hover {
+  color: #fff;
+}
+
+/* --- Proximity Action HUD Prompt --- */
+#proximity-prompt {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: #facc15;
+  font-family: var(--font-retro);
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  padding: 12px 24px;
+  border: 3px solid #facc15;
+  border-radius: 6px;
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.4), 4px 4px 0 #000;
+  cursor: pointer;
+  z-index: 600;
+  animation: promptPulse 1.2s infinite alternate;
+  white-space: nowrap;
+}
+
+@keyframes promptPulse {
+  0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 15px rgba(250, 204, 21, 0.3), 4px 4px 0 #000; }
+  100% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 28px rgba(250, 204, 21, 0.7), 4px 4px 0 #000; }
+}
+
+/* --- Controls Instructions Overlay (Desktop Bottom Left) --- */
+.desktop-controls-legend {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  border: 1px solid #1e293b;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  z-index: 400;
+}
+
+.legend-key {
+  color: #38bdf8;
+  background: #1e293b;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #334155;
+}
+
+/* --- Mobile On-Screen D-Pad & Action Button --- */
+#mobile-controls {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 700;
+}
+
+.dpad-container {
+  position: absolute;
+  bottom: 24px;
+  left: 20px;
+  width: 140px;
+  height: 140px;
+  pointer-events: auto;
+}
+
+.dpad-cross {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.dpad-btn {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  background: #1e293b;
+  border: 2px solid #475569;
+  border-radius: 6px;
+  color: #94a3b8;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0 #000;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+.dpad-btn:active {
+  background: #38bdf8;
+  color: #000;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #000;
+}
+
+#dpad-up    { top: 0; left: 48px; }
+#dpad-down  { bottom: 0; left: 48px; }
+#dpad-left  { top: 48px; left: 0; }
+#dpad-right { top: 48px; right: 0; }
+
+.dpad-center-hub {
+  position: absolute;
+  top: 48px;
+  left: 48px;
+  width: 44px;
+  height: 44px;
+  background: #0f172a;
+  border: 1px solid #334155;
+}
+
+/* Mobile Action Button (A - Interact / Enter) */
+.action-btn-container {
+  position: absolute;
+  bottom: 32px;
+  right: 24px;
+  pointer-events: auto;
+}
+
+.dpad-action-btn {
+  width: 68px;
+  height: 68px;
+  background: radial-gradient(circle, #ea580c 40%, #c2410c 100%);
+  border: 3px solid #ffedd5;
+  border-radius: 50%;
+  color: #fff;
+  font-family: var(--font-retro);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 3px 3px 0 #000, 0 0 15px rgba(234, 88, 12, 0.4);
+  touch-action: manipulation;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dpad-action-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 #000;
+  background: #f97316;
+}
+
+.btn-label-sub {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  opacity: 0.8;
+}
+
+/* Hide mobile controls on desktop if fine pointer exists and wide screen */
+@media (min-width: 900px) and (hover: hover) {
+  #mobile-controls {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .desktop-controls-legend {
+    display: none;
+  }
+}

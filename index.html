@@ -1,0 +1,3178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Abhishek Vira — A Little World</title>
+  <meta name="description" content="An interactive 8-bit personal world for Abhishek Vira — musician, builder, runner & strategist.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%2313382c'/><text x='3' y='12' font-family='monospace' font-size='10' font-weight='bold' fill='%23f5f2eb'>AV</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-cream: #f6f3eb;
+      --dot-color: #d6cebe;
+      --frame-bg: #13382c;
+      --frame-border: #0b221a;
+      --hud-text: #b9d8ca;
+      --ink: #13382c;
+      --body-text: #2c3e35;
+      --muted: #6b7d74;
+      --card-bg: #fffdfa;
+      --card-border: #13382c;
+      --gold: #f59e0b;
+      --px: 'Press Start 2P', monospace;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: var(--bg-cream);
+      background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+      background-size: 20px 20px;
+      color: var(--body-text);
+      font: 15px/1.6 var(--sans);
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--gold) !important;
+      outline-offset: 2px !important;
+    }
+    .sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Outer Wrapper */
+    #app-container {
+      max-width: 1080px;
+      width: 100%;
+      margin: 0 auto;
+      padding: clamp(10px, 2.5vw, 20px) clamp(10px, 2.5vw, 18px) 40px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    /* Top Page Header (Matching ChatGPT build) */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 6px;
+      gap: 10px;
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      flex-shrink: 0;
+    }
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      background: var(--frame-bg);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font: 14px var(--mono);
+      font-weight: 700;
+      border: 2px solid var(--frame-border);
+      border-radius: 2px;
+      letter-spacing: 0.5px;
+    }
+    .brand-titles h1 {
+      margin: 0;
+      font: clamp(11px, 2.5vw, 13px) var(--px);
+      color: var(--ink);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .brand-titles span {
+      font: 10px var(--mono);
+      color: var(--muted);
+      letter-spacing: 1px;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1.5vw, 14px);
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font: 11px var(--mono);
+      color: var(--muted);
+      background: rgba(19, 56, 44, 0.05);
+      border: 1px solid rgba(19, 56, 44, 0.12);
+      padding: 6px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    @media (max-width: 640px) {
+      .status-pill { display: none; }
+      .brand-badge { width: 38px; height: 38px; font-size: 12px; }
+      .brand-group { gap: 8px; }
+      .header-btn { padding: 6px 10px; font-size: 10px; }
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulseDot 2s infinite;
+    }
+    @keyframes pulseDot {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+      70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .header-btn {
+      font: 11px var(--mono);
+      background: #fff;
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      padding: 7px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 2px 2px 0 var(--ink);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .header-btn:hover {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--ink);
+      background: #faf7f0;
+    }
+
+    /* ==========================================================================
+       WORLD MAP FRAME (Deep Forest Bezel + GBA Pokémon Ruby World Inside)
+       ========================================================================== */
+    #world-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .bezel-frame {
+      background: var(--frame-bg);
+      border: 4px solid var(--frame-border);
+      border-radius: 3px;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(11, 34, 26, 0.25);
+      position: relative;
+    }
+    .bezel-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: #0f2d23;
+      border-bottom: 2px solid #091a14;
+      font: 10px var(--mono);
+      color: var(--hud-text);
+      letter-spacing: 1px;
+    }
+    .bezel-top-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .bezel-top-left strong { color: #fff; }
+    .bezel-top-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* 3:2 Stage Frame */
+    #stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3/2;
+      background: #58b848;
+      overflow: hidden;
+    }
+    #cv {
+      width: 100%;
+      height: 100%;
+      display: block;
+      image-rendering: pixelated;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    /* In-world GBA Pokémon Dialogue Box */
+    #dialog {
+      position: absolute;
+      left: 3%;
+      right: 3%;
+      bottom: 4%;
+      display: none;
+      min-height: 24%;
+      padding: 3% 4%;
+      background: #f8f8f8;
+      border: 4px solid #202020;
+      box-shadow: inset 0 0 0 3px #f8f8f8, inset 0 0 0 6px #4880c0;
+      font: clamp(8px, 1.6vw, 13px)/1.8 var(--px);
+      color: #303030;
+      cursor: pointer;
+      z-index: 25;
+    }
+    #more {
+      position: absolute;
+      right: 14px;
+      bottom: 8px;
+      color: #e04040;
+      animation: bl 0.6s steps(2) infinite;
+    }
+    #prompt, #hint {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      font: clamp(8px, 1.5vw, 11px) var(--px);
+      border: 3px solid #000;
+      padding: 8px 14px;
+      white-space: nowrap;
+      z-index: 20;
+    }
+    #prompt {
+      top: 3%;
+      background: var(--gold);
+      color: #000;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 #000;
+      animation: promptPulse 1.2s infinite alternate;
+    }
+    #hint {
+      bottom: 4%;
+      background: #fff;
+      color: #222;
+      max-width: 92%;
+      white-space: normal;
+      text-align: center;
+      line-height: 1.6;
+    }
+    @keyframes bl { 50% { opacity: 0; } }
+    @keyframes promptPulse {
+      0% { transform: translateX(-50%) scale(1); }
+      100% { transform: translateX(-50%) scale(1.04); }
+    }
+
+    /* Bezel Bottom Bar */
+    .bezel-bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #0f2d23;
+      border-top: 2px solid #091a14;
+      font: 10px var(--mono);
+      color: var(--hud-text);
+      gap: 8px;
+    }
+    .controls-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .kb-badge {
+      background: #174235;
+      color: #fff;
+      border: 1px solid #235e4b;
+      padding: 2px 6px;
+      border-radius: 2px;
+      font: 9px var(--mono);
+    }
+    .mobile-hint { display: none; }
+    @media (max-width: 680px), (hover: none) and (pointer: coarse) {
+      .desktop-hint { display: none; }
+      .mobile-hint { display: flex; }
+    }
+
+    /* Dedicated Mobile D-Pad (Shown on touch / mobile below the frame) */
+    #pad {
+      display: none;
+      width: 100%;
+      max-width: 440px;
+      margin: 10px auto 0;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    body.touch #pad { display: flex; }
+    @media (max-width: 900px), (hover: none) and (pointer: coarse) {
+      #pad { display: flex !important; }
+    }
+
+    .dp {
+      display: grid;
+      grid-template: repeat(3, clamp(44px, 12vw, 56px)) / repeat(3, clamp(44px, 12vw, 56px));
+      gap: 3px;
+    }
+    .dp button {
+      background: #1b4537;
+      color: #fff;
+      border: 2px solid var(--frame-border);
+      font: clamp(14px, 4vw, 18px) var(--px);
+      touch-action: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 2px 2px 0 #000;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      border-radius: 3px;
+    }
+    .dp button.on {
+      background: var(--gold) !important;
+      color: #000 !important;
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 #000;
+    }
+    [data-d=u] { grid-area: 1/2; }
+    [data-d=l] { grid-area: 2/1; }
+    [data-d=r] { grid-area: 2/3; }
+    [data-d=d] { grid-area: 3/2; }
+    .dp-hub { grid-area: 2/2; background: #13382c; border: 1px solid #0b221a; }
+
+    /* Action Buttons (A & B) */
+    .action-group {
+      display: flex;
+      gap: clamp(8px, 2.5vw, 14px);
+      align-items: center;
+    }
+    #ab, #bb {
+      border: 3px solid #000;
+      border-radius: 50%;
+      font-family: var(--px);
+      touch-action: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 3px 3px 0 #000;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #ab {
+      width: clamp(58px, 16vw, 74px);
+      height: clamp(58px, 16vw, 74px);
+      background: #d83838;
+      font-size: clamp(12px, 3.5vw, 15px);
+    }
+    #ab span { font: 8px var(--mono); opacity: 0.9; margin-top: 2px; }
+    #ab.on {
+      background: var(--gold) !important;
+      color: #000 !important;
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 #000;
+    }
+
+    #bb {
+      width: clamp(48px, 13vw, 58px);
+      height: clamp(48px, 13vw, 58px);
+      background: #235e4b;
+      font-size: clamp(10px, 3vw, 13px);
+      margin-top: 14px;
+    }
+    #bb span { font: 7px var(--mono); opacity: 0.9; margin-top: 2px; }
+    #bb.on {
+      background: #38bdf8 !important;
+      color: #000 !important;
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 #000;
+    }
+
+    /* Bottom Navigation Dock Cards (Exact replica of Image 1) */
+    .nav-dock-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: clamp(8px, 1.8vw, 12px);
+      margin-top: 4px;
+    }
+    @media (max-width: 860px) {
+      .nav-dock-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .nav-dock-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    }
+
+    .dock-card {
+      background: #fdfcf7;
+      border: 1.5px solid #dcd5c7;
+      border-radius: 4px;
+      padding: clamp(9px, 2vw, 12px) clamp(10px, 2vw, 14px);
+      text-decoration: none;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .dock-card:hover {
+      border-color: var(--ink);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(19, 56, 44, 0.1);
+      background: #fff;
+    }
+    .dock-icon {
+      font-size: clamp(14px, 3vw, 17px);
+      color: #1b4537;
+    }
+    .dock-label {
+      font: 700 clamp(12px, 2.5vw, 13px) var(--sans);
+      color: var(--ink);
+    }
+
+    /* ==========================================================================
+       SUB-PAGES: The ChatGPT Frame & Card Design (Image 2)
+       ========================================================================== */
+    #pages { display: none; }
+    #pages.active { display: block; }
+
+    .inside-page-frame {
+      background: var(--card-bg);
+      border: 3.5px solid var(--frame-bg);
+      border-radius: 4px;
+      padding: clamp(20px, 4.5vw, 42px) clamp(16px, 4vw, 42px) clamp(28px, 5vw, 48px);
+      box-shadow: 0 12px 36px rgba(19, 56, 44, 0.12);
+      position: relative;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    @media (max-width: 640px) {
+      .inside-page-frame { border-width: 2.5px; }
+      .star-watermark { display: none; }
+      .page-hero-title { font-size: clamp(26px, 8vw, 38px); margin-bottom: 12px; }
+      .page-hero-subtitle { font-size: 15px; margin-bottom: 22px; }
+      .dashed-sub-box { padding: 16px 14px; margin-bottom: 24px; }
+      .content-grid { grid-template-columns: 1fr; }
+      .dark-action-btn { width: 100%; text-align: center; }
+    }
+
+    /* Soft 4-Point Star Watermark in Top Right (Image 2) */
+    .star-watermark {
+      position: absolute;
+      top: 30px;
+      right: 40px;
+      width: 140px;
+      height: 140px;
+      opacity: 0.18;
+      pointer-events: none;
+      fill: #a39577;
+    }
+
+    .breadcrumb-tag {
+      font: 11px var(--mono);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #6a7e72;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .page-hero-title {
+      font: 800 clamp(32px, 5.5vw, 54px)/1.1 var(--sans);
+      color: var(--ink);
+      margin: 0 0 16px;
+      letter-spacing: -1px;
+    }
+
+    .page-hero-subtitle {
+      font: 17px/1.6 var(--sans);
+      color: #3b5045;
+      max-width: 680px;
+      margin: 0 0 32px;
+    }
+
+    /* Dashed Construction / Feature Card (Image 2) */
+    .dashed-sub-box {
+      border: 2px dashed #b8cebf;
+      border-radius: 4px;
+      background: rgba(246, 243, 235, 0.5);
+      padding: 24px 28px;
+      margin-bottom: 32px;
+    }
+    .dashed-label {
+      font: 10px var(--mono);
+      letter-spacing: 1.5px;
+      color: #6a7e72;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .dashed-lead {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--body-text);
+      margin: 0;
+    }
+
+    /* Section Headers */
+    .section-sh {
+      font: 11px var(--px);
+      color: var(--ink);
+      letter-spacing: 0.5px;
+      margin: 36px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e2ddd3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Content Cards Grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .content-card {
+      background: #fff;
+      border: 2px solid #d5cec0;
+      border-radius: 4px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      transition: all 0.15s;
+    }
+    .content-card:hover {
+      border-color: var(--ink);
+      box-shadow: 0 6px 16px rgba(19, 56, 44, 0.08);
+      transform: translateY(-2px);
+    }
+    .content-card h3 {
+      font: 700 17px var(--sans);
+      color: var(--ink);
+      margin: 0 0 6px;
+    }
+    .content-card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #4a5c52;
+      margin: 6px 0 14px;
+    }
+    .content-meta {
+      font: 11px var(--mono);
+      color: #6a7e72;
+      margin-bottom: 6px;
+    }
+
+    /* Chips & Tags */
+    .tag-chip {
+      display: inline-block;
+      font: 10px var(--mono);
+      background: #edf4ef;
+      color: #174235;
+      padding: 4px 8px;
+      border-radius: 3px;
+      margin: 3px 2px;
+      border: 1px solid #d3e2d6;
+    }
+
+    /* Interactive Action Buttons */
+    .dark-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--ink);
+      color: #fff;
+      font: 11px var(--mono);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 3px 3px 0 var(--frame-border);
+      transition: all 0.15s;
+    }
+    .dark-action-btn:hover {
+      background: #1d4d3d;
+      transform: translate(1px, 1px);
+      box-shadow: 2px 2px 0 var(--frame-border);
+    }
+
+    .light-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fdfcf7;
+      color: var(--ink);
+      font: 10px var(--mono);
+      font-weight: 700;
+      padding: 8px 14px;
+      border: 1.5px solid var(--ink);
+      border-radius: 2px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 2px 2px 0 var(--ink);
+      transition: all 0.15s;
+    }
+    .light-btn:hover {
+      background: var(--ink);
+      color: #fff;
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    /* Lists */
+    .dashed-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .dashed-list li {
+      padding: 14px 0;
+      border-bottom: 1px dashed #c8dece;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .dashed-list li:last-child { border-bottom: none; }
+    .list-title {
+      font-weight: 700;
+      color: var(--ink);
+      font-size: 15px;
+    }
+    .list-sub {
+      font-size: 13px;
+      color: #55685d;
+    }
+    .list-date {
+      font: 11px var(--mono);
+      color: #d83838;
+      font-weight: 700;
+    }
+
+    /* Retro Pixel Placeholder Box (Fallback when images are loading/offline) */
+    .ph-box {
+      width: 100%;
+      height: 100%;
+      background: conic-gradient(#e8d8a8 25%, #d8c898 0 50%, #e8d8a8 0 75%, #d8c898 0) 0 0/16px 16px;
+      font: 10px var(--mono);
+      color: #6a5a30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1.5px solid #c4b58e;
+    }
+
+    /* Hero Cover Banner for Sub-Pages */
+    .page-cover-banner {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 21/9;
+      min-height: 170px;
+      max-height: 310px;
+      border: 2.5px solid var(--frame-bg);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: 0 6px 20px rgba(19, 56, 44, 0.12);
+      background: #0f2d23;
+    }
+    @media (max-width: 640px) {
+      .page-cover-banner { aspect-ratio: 16/9; min-height: 150px; margin-bottom: 18px; }
+    }
+
+    /* Dedicated framing for Run Club group photo so Abhishek & all members are 100% visible */
+    .page-cover-banner.run-cover {
+      aspect-ratio: 16/11;
+      max-height: 540px;
+      min-height: 320px;
+      background: #091a13;
+    }
+    .page-cover-banner.run-cover .page-cover-img {
+      object-position: center 75%;
+      transition: object-fit 0.2s ease;
+    }
+    @media (max-width: 640px) {
+      .page-cover-banner.run-cover {
+        aspect-ratio: 1/1;
+        max-height: 420px;
+        min-height: 280px;
+      }
+      .page-cover-banner.run-cover .page-cover-img {
+        object-position: center 75%;
+      }
+    }
+    .cover-expand-btn {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: rgba(11, 34, 26, 0.9);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      border: 1px solid rgba(248, 200, 48, 0.5);
+      font: 10px var(--mono);
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.15s;
+      z-index: 5;
+    }
+    .cover-expand-btn:hover {
+      background: var(--gold);
+      color: #0b221a;
+      border-color: #fff;
+    }
+    .page-cover-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .cover-overlay-badge {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      background: rgba(11, 34, 26, 0.88);
+      backdrop-filter: blur(4px);
+      color: var(--gold);
+      border: 1px solid rgba(248, 200, 48, 0.4);
+      font: 10px var(--mono);
+      padding: 5px 10px;
+      border-radius: 2px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Run Club Gallery */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .gallery-card {
+      background: #fff;
+      border: 2px solid #d5cec0;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      transition: all 0.15s;
+    }
+    .gallery-card:hover {
+      border-color: var(--ink);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(19, 56, 44, 0.08);
+    }
+    .gallery-img-wrap {
+      width: 100%;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      background: #0f2d23;
+      position: relative;
+    }
+    .gallery-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .gallery-img.fit-contain {
+      object-fit: contain;
+      background: #fdfbf7;
+      box-sizing: border-box;
+      padding: 10px;
+    }
+    .gallery-card:hover .gallery-img {
+      transform: scale(1.03);
+    }
+    .gallery-content {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+    .gallery-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font: 10px var(--mono);
+      color: #6a7e72;
+      margin-bottom: 6px;
+    }
+    .gallery-caption {
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--body-text);
+      margin: 0;
+      font-weight: 500;
+    }
+
+    /* Downloadable Android APK Cards (The Lab) */
+    .apk-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .apk-card {
+      background: #fff;
+      border: 2.5px solid #235e4b;
+      border-radius: 4px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 4px 14px rgba(35, 94, 75, 0.08);
+      transition: all 0.15s;
+    }
+    .apk-card:hover {
+      border-color: var(--ink);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(19, 56, 44, 0.14);
+    }
+    .apk-top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .apk-badge-android {
+      font: 9px var(--mono);
+      font-weight: 700;
+      background: #0f2d23;
+      color: var(--gold);
+      border: 1px solid #235e4b;
+      padding: 3px 8px;
+      border-radius: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .apk-version-pill {
+      font: 10px var(--mono);
+      color: #4a5c52;
+      background: #edf4ef;
+      padding: 3px 6px;
+      border-radius: 2px;
+      font-weight: 700;
+    }
+    .apk-title {
+      font: 700 18px var(--sans);
+      color: var(--ink);
+      margin: 0 0 4px;
+    }
+    .apk-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font: 11px var(--mono);
+      color: #6a7e72;
+      margin-bottom: 10px;
+    }
+    .apk-desc {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #3b5045;
+      margin: 0 0 16px;
+    }
+    .apk-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #174235;
+      color: #fff;
+      font: 11px var(--mono);
+      font-weight: 700;
+      padding: 11px 16px;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 2px 2px 0 var(--ink);
+      transition: all 0.15s;
+      width: 100%;
+      margin-top: auto;
+      box-sizing: border-box;
+    }
+    .apk-btn:hover {
+      background: var(--ink);
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--ink);
+      color: var(--gold);
+    }
+
+    /* Merch Frankly Wearing Stat Banner & Store CTA */
+    .merch-stat-banner {
+      background: linear-gradient(135deg, #0d271e 0%, #174435 100%);
+      border: 2.5px solid var(--frame-border);
+      border-radius: 4px;
+      padding: 22px 26px;
+      color: #fff;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 8px 24px rgba(11, 34, 26, 0.18);
+    }
+    .merch-stat-number {
+      font: 800 clamp(28px, 6vw, 42px)/1 var(--sans);
+      color: var(--gold);
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .merch-stat-label {
+      font: 12px var(--mono);
+      color: #d1ded7;
+      letter-spacing: 0.5px;
+    }
+    .merch-redirect-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gold);
+      color: #000;
+      font: 11px var(--mono);
+      font-weight: 700;
+      padding: 12px 20px;
+      border: 2px solid #000;
+      border-radius: 2px;
+      text-decoration: none;
+      box-shadow: 3px 3px 0 #000;
+      transition: all 0.15s;
+    }
+    .merch-redirect-btn:hover {
+      transform: translate(1px, 1px);
+      box-shadow: 2px 2px 0 #000;
+      background: #ffe066;
+    }
+
+    /* Merch Card Additions */
+    .merch-img-wrap {
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      border: 1.5px solid #d5cec0;
+      border-radius: 3px;
+      margin-bottom: 12px;
+      background: #f4efe4;
+      position: relative;
+    }
+    .merch-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.25s ease;
+    }
+    .content-card:hover .merch-img {
+      transform: scale(1.04);
+    }
+    .merch-price-tag {
+      font: 700 14px var(--mono);
+      color: #174235;
+      background: #edf4ef;
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 2px;
+      margin: 4px 0 10px;
+      border: 1px solid #d3e2d6;
+    }
+
+    /* Enhanced Journey Map (About Section) */
+    .journey-map {
+      position: relative;
+      padding-left: 28px;
+      margin: 24px 0 36px 8px;
+    }
+    .journey-map::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 12px;
+      bottom: 12px;
+      width: 3px;
+      background: #cbdcd1;
+      border-radius: 2px;
+    }
+    .journey-node {
+      position: relative;
+      margin-bottom: 26px;
+    }
+    .journey-node:last-child {
+      margin-bottom: 0;
+    }
+    .journey-dot {
+      position: absolute;
+      left: -28px;
+      top: 5px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3.5px solid #1b4537;
+      box-sizing: border-box;
+      z-index: 2;
+      transition: all 0.2s;
+    }
+    .journey-node.current .journey-dot {
+      background: var(--gold);
+      border-color: #0b221a;
+      box-shadow: 0 0 0 4px rgba(248, 200, 48, 0.35);
+      animation: pulseDot 1.5s infinite;
+    }
+    @keyframes pulseDot {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+      100% { transform: scale(1); }
+    }
+    .journey-card {
+      background: #fff;
+      border: 2px solid #d5cec0;
+      border-radius: 4px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      transition: all 0.15s;
+    }
+    .journey-node.current .journey-card {
+      border: 2.5px solid #1b4537;
+      background: #fbfaf5;
+      box-shadow: 0 6px 20px rgba(27, 69, 55, 0.1);
+    }
+    .journey-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .journey-year-badge {
+      font: 700 11px var(--mono);
+      background: #174235;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 2px;
+      letter-spacing: 0.5px;
+    }
+    .journey-node.current .journey-year-badge {
+      background: var(--gold);
+      color: #000;
+      font-weight: 800;
+    }
+    .journey-title {
+      font: 700 17px var(--sans);
+      color: var(--ink);
+      margin: 4px 0 2px;
+    }
+    .journey-sub {
+      font: 600 13px var(--sans);
+      color: #3b5045;
+      margin-bottom: 8px;
+    }
+    .journey-desc {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #4a5c52;
+      margin: 0 0 12px;
+    }
+    .journey-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    /* About Avatar & Hero Split */
+    .about-hero-grid {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 720px) {
+      .about-hero-grid { grid-template-columns: 1fr; }
+    }
+    .about-avatar-card {
+      background: #fff;
+      border: 2px solid #d5cec0;
+      border-radius: 4px;
+      padding: 14px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .about-avatar-img-wrap {
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      border: 2px solid var(--frame-border);
+      border-radius: 3px;
+      margin-bottom: 10px;
+      background: #0f2d23;
+      position: relative;
+    }
+    .about-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .about-main-bio-quote {
+      font: 700 clamp(16px, 2.5vw, 21px)/1.5 var(--sans);
+      color: var(--ink);
+      background: #edf4ef;
+      border-left: 4px solid #1b4537;
+      padding: 16px 20px;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 18px;
+    }
+
+    /* Input Elements inside Services */
+    .form-input {
+      width: 100%;
+      background: #fff;
+      border: 2px solid #ccd8cf;
+      border-radius: 3px;
+      padding: 12px 14px;
+      font: 14px var(--sans);
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+
+    /* Screen Wipe Transition */
+    #wipe {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: var(--frame-bg);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s steps(4);
+    }
+    #wipe.on { opacity: 1; pointer-events: all; }
+    .rm * { animation: none !important; transition: none !important; }
+
+    /* Outer Footer (Matching Image 1 & 2) */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      padding: 8px 4px;
+      font: 10px var(--mono);
+      color: #7d8f85;
+      letter-spacing: 1px;
+    }
+    footer a { color: inherit; text-decoration: none; }
+    footer a:hover { color: var(--ink); }
+  </style>
+</head>
+<body>
+
+  <div id="app-container">
+
+    <!-- Top Page Header -->
+    <header>
+      <a class="brand-group" href="#/">
+        <div class="brand-badge">AV</div>
+        <div class="brand-titles">
+          <h1>ABHISHEK VIRA</h1>
+          <span>A LITTLE WORLD</span>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <div class="status-pill">
+          <div class="status-dot"></div>
+          <span>A tiny world in progress</span>
+        </div>
+
+        <button id="snd-toggle" class="header-btn" title="Toggle retro sound">
+          <span>🔊</span> SOUND: OFF
+        </button>
+
+        <!-- Back to Map Button (Visible when inside a sub-page) -->
+        <a id="hdr-back" class="header-btn" href="#/" style="display:none">
+          ← Back to map
+        </a>
+      </div>
+    </header>
+
+    <!-- 1. The 8-Bit Game World View -->
+    <div id="world-section">
+      <div class="bezel-frame">
+        <!-- Bezel Top Bar -->
+        <div class="bezel-top-bar">
+          <div class="bezel-top-left">
+            <strong>VIRA ISLAND ✦ ROUTE 01</strong>
+          </div>
+          <div class="bezel-top-right">
+            <span>🌤 CLEAR SKIES</span>
+          </div>
+        </div>
+
+        <!-- 3:2 Pokémon Ruby Canvas Stage -->
+        <div id="stage">
+          <canvas id="cv" tabindex="0" aria-label="Interactive Pokémon-style world map. Arrow keys or WASD to move, Enter to interact. Cards below work too."></canvas>
+          <button id="prompt" type="button" aria-live="polite"></button>
+          <div id="hint" role="status"></div>
+          <div id="dialog" role="status">
+            <span id="dtxt" aria-hidden="true"></span>
+            <span class="sr" id="dsr" aria-live="polite"></span>
+            <span id="more">▼</span>
+          </div>
+        </div>
+
+        <!-- Bezel Bottom Bar -->
+        <div class="bezel-bottom-bar">
+          <div>Wander around. Find a door.</div>
+          <div class="controls-badge-row desktop-hint">
+            <span>MOVE</span>
+            <span class="kb-badge">WASD</span>
+            <span class="kb-badge">↑↓←→</span>
+            <span class="kb-badge">ENTER</span>
+            <span>VISIT</span>
+          </div>
+          <div class="controls-badge-row mobile-hint">
+            <span class="kb-badge">D-PAD / TAP</span>
+            <span>VISIT</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dedicated Mobile D-Pad (Shown on touch / phones below the frame) -->
+      <div id="pad">
+        <div class="dp">
+          <button data-d="u" aria-label="Move Up">▲</button>
+          <button data-d="l" aria-label="Move Left">◀</button>
+          <div class="dp-hub"></div>
+          <button data-d="r" aria-label="Move Right">▶</button>
+          <button data-d="d" aria-label="Move Down">▼</button>
+        </div>
+
+        <div class="action-group">
+          <button id="bb" aria-label="Menu">
+            B<span>MENU</span>
+          </button>
+          <button id="ab" aria-label="Enter / Interact">
+            A<span>ENTER</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation Dock (Exact replica of Image 1 cards) -->
+      <div class="nav-dock-grid">
+        <a class="dock-card" href="#/music">
+          <div class="dock-icon">♫</div>
+          <div class="dock-label">Music House</div>
+        </a>
+        <a class="dock-card" href="#/builds">
+          <div class="dock-icon">✱</div>
+          <div class="dock-label">The Lab</div>
+        </a>
+        <a class="dock-card" href="#/run">
+          <div class="dock-icon">↗</div>
+          <div class="dock-label">Run Club</div>
+        </a>
+        <a class="dock-card" href="#/merch">
+          <div class="dock-icon">▣</div>
+          <div class="dock-label">Merch Shop</div>
+        </a>
+        <a class="dock-card" href="#/services">
+          <div class="dock-icon">✦</div>
+          <div class="dock-label">Services</div>
+        </a>
+        <a class="dock-card" href="#/about">
+          <div class="dock-icon">☺</div>
+          <div class="dock-label">Me</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 2. Inside Sub-Pages View (Rendered inside the framed container of Image 2) -->
+    <div id="pages"></div>
+
+    <!-- Outer Page Footer -->
+    <footer>
+      <div>MADE OF PIXELS & POSSIBILITY</div>
+      <div>NO QUEST REQUIRED ✦</div>
+    </footer>
+
+  </div>
+
+  <div id="wipe"></div>
+
+<script>
+'use strict';
+
+/* ==========================================================================
+   ★ EDITABLE CONTENT CONFIGURATION (ABHISHEK VIRA) ★
+   Change any text, links, photos, APK download links, or tour dates here!
+   - To use your own images: replace the URLs below with your image URLs or local files (e.g. 'assets/photo.jpg').
+   - If an image link is left blank or fails to load, a stylish retro pixel pattern will display automatically.
+   ========================================================================== */
+const D = {
+  email: 'abhishek@example.com',
+  social: {
+    Spotify: 'https://open.spotify.com/artist/0XRsRVwlKw9vc5bKgJR2lA',
+    Instagram: 'https://instagram.com/shutupvira',
+    Apple: 'https://music.apple.com',
+    YouTube: 'https://youtube.com',
+    Strava: 'https://strava.com',
+    GitHub: 'https://github.com'
+  },
+
+  music: {
+    moniker: 'Shut Up Vira',
+    artistName: 'Shut Up Vira (Abhishek Vira)',
+    coverImage: 'Assets/Music/cover.JPG',
+    coverBadge: 'LIVE SOUNDSCAPES ✦ SYNTHESIS ✦ SHUT UP VIRA',
+    hero: 'Genre-fluid songs about love, destruction, dark humor & the strange circus of being alive.',
+    intro: [
+      'Shut Up Vira (Abhishek Vira) is a Mumbai-based genre-fluid artist making songs about love, destruction, dark humor, and the strange circus of being alive.',
+      'His music moves between romance and rebellion, softness and sarcasm, women he’s dated and men he’s hated. Whether he’s writing about heartbreak, capitalism, self-destruction, or human absurdity, every track carries sharp hooks and sharper intent.',
+      'Sometimes weird, sometimes wild, sometimes beautiful, but never fucking boring. Also performing live with bands <strong>VenomBerries</strong> and <strong>LeadFeather</strong>, and teaching sound.',
+      '<em>Note from the Artist: "stream the heck out of my music, I got bills to pay, bitch!"</em>'
+    ],
+    bands: ['Shut Up Vira (Solo)', 'VenomBerries', 'LeadFeather'],
+    upcomingNotice: 'For upcoming tour dates, gig announcements & secret shows, follow @thevenomberriesband on Instagram',
+    upcomingNoticeUrl: 'https://www.instagram.com/thevenomberriesband/',
+    stream: {
+      Spotify: 'https://open.spotify.com/artist/0XRsRVwlKw9vc5bKgJR2lA',
+      Instagram: 'https://instagram.com/shutupvira',
+      VenomBerries: 'https://www.instagram.com/thevenomberriesband/',
+      Apple: 'https://music.apple.com',
+      YouTube: 'https://youtube.com',
+      SoundCloud: 'https://soundcloud.com'
+    },
+    releases: [
+      {
+        t: "Can't Let Go",
+        artist: "Shut Up Vira feat. Tannish",
+        y: "2026 • Single • Latest Release",
+        u: "https://open.spotify.com/track/1ki8Zcc8tyVBOYaXJHVsOM",
+        albumUrl: "https://open.spotify.com/album/6gw52y7ufZNrBqv890rcbj",
+        img: "https://i.scdn.co/image/ab67616d0000b273b7dab82c62f8b787595f86c8",
+        preview: "https://p.scdn.co/mp3-preview/2dfdfd7e1eab6972e7b41db3717f0ba6cd836c34",
+        d: "Collaboration with Tannish. A poignant, driving blend of raw vocal vulnerability, textured analog synths, and late-night melodic momentum.",
+        pattern: [440, 554, 659, 880, 659, 554]
+      },
+      {
+        t: "She Feels Like Home",
+        artist: "Shut Up Vira",
+        y: "2026 • Single • Popular",
+        u: "https://open.spotify.com/track/5CSQ5KKhh2Fgst41W8rNWl",
+        albumUrl: "https://open.spotify.com/album/2jqFjlksZArv6bXqoy1xR6",
+        img: "https://i.scdn.co/image/ab67616d0000b2731df2eec62a1d570478dbc0df",
+        preview: "https://p.scdn.co/mp3-preview/3470b9750adc2d1d0cb127b80257ecb8106181e5",
+        d: "Intimate and genre-fluid romantic reverie moving between soft introspection, layered harmonies, and soulful melodic warmth.",
+        pattern: [523, 659, 783, 1046, 783, 659]
+      }
+    ],
+    upcomingShows: [
+      { d: 'FOLLOW ON INSTAGRAM', v: 'Upcoming Gigs & Tour Announcements', c: 'VenomBerries Live Tour Dates • Watch stories for secret pop-ups', status: 'Announcements', u: 'https://www.instagram.com/thevenomberriesband/' },
+      { d: 'UPCOMING • 2026', v: 'antiSOCIAL Live Stage', c: 'Mumbai, IN • Sceptr3 / VenomBerries sets', status: 'In Rehearsals', u: 'https://www.instagram.com/thevenomberriesband/' }
+    ],
+    pastShows: [
+      { name: 'Cross City Chaos', date: '27th Oct', venue: 'The Stables', city: 'Mumbai' },
+      { name: 'Emo Night', date: '8th Sept', venue: 'The Stables', city: 'Mumbai' },
+      { name: 'Gods Of Metal', date: 'August', venue: 'The Stables', city: 'Mumbai' },
+      { name: 'Pop Punk Party', date: '9th March', venue: 'The Stables', city: 'Mumbai' },
+      { name: 'Metallica Tribute with Sceptr3', date: 'Oct 25', venue: 'antiSOCIAL', city: 'Mumbai' }
+    ],
+    gallery: [
+      { url: 'Assets/Music/Singing.jpg', t: 'Live Vocals' },
+      { url: 'Assets/Music/Venomberries.jpg', t: 'VenomBerries Live' },
+      { url: 'Assets/Music/bass.JPG', t: 'Live Bass' },
+      { url: 'Assets/Music/singing%202.jpg', t: 'Stage Performance' },
+      { url: 'Assets/Music/vemoberries%202.jpg', t: 'VenomBerries Band' },
+      { url: 'Assets/Music/bass2.JPG', t: 'Bass Groove' },
+      { url: 'Assets/Music/Main.jpg', t: 'Shut Up Vira' }
+    ]
+  },
+
+  run: {
+    clubName: 'Not A Run Club',
+    tagline: 'Mumbai Community & Outdoor Adventures',
+    founders: 'Founded by Abhishek Vira & Raj Varshney',
+    coverImage: 'Assets/Run%20Club/Group.jpg',
+    logo: 'Assets/Run%20Club/Logo.png',
+    coverBadge: 'NOT A RUN CLUB ✦ MUMBAI SQUAD ✦ ZERO GATEKEEPING',
+    hero: 'Miles, coffee, community & good dopamine. Zero pace gatekeeping.',
+    lead: 'Not A Run Club is a Mumbai-based running and fitness community built for people who want to stay active, meet new people, and say “YES” to all plans! We do weekly runs, weekend shakeouts, outdoor adventures (bouldering, surfing, cold plunges, treasure hunts, game nights), and post-run coffee hangs. Zero pace gatekeeping. All paces welcome, from first-timers to marathoners. Nobody runs alone.',
+    metrics: ['SATURDAY RUNS • 6:45 AM', 'WEEKEND ADVENTURES', 'SURF • BOULDER • PLUNGE', '0 MIN/KM JUDGMENT'],
+    links: {
+      whatsapp: 'https://chat.whatsapp.com/LIpAYgqVS1tALxF3SKMapQ?mode=ems_copy_t',
+      instagram: 'https://www.instagram.com/notarunclubmumbai/',
+      strava: 'https://strava.com'
+    },
+    adventures: [
+      { name: 'Saturday Morning Community Runs', icon: '🏃', desc: '5K to 10K conversational morning pace across Mumbai promenades. We start together, pace each other, and finish together at a local café.' },
+      { name: 'Surfing & Ocean Sessions', icon: '🏄', desc: 'Catching waves along coastal breaks, sunrise paddle-outs, and salt-water therapy for mental reset.' },
+      { name: 'Bouldering & Climbing Days', icon: '🧗', desc: 'Indoor climbing gym meetups, sending boulder problems, improving grip strength, and cheering each other on.' },
+      { name: 'Cold Plunges & Breathwork', icon: '🧊', desc: 'Full-body ice baths, guided breathwork, and contrast recovery after heavy running blocks.' },
+      { name: 'Treasure Hunts & Social Games', icon: '🗺️', desc: 'City-wide urban exploration challenges, riddle sprints, and late-night board & card game hangouts.' }
+    ],
+    gallery: [
+      { url: 'Assets/Run%20Club/Abhishek%20and%20Raj.jpg', t: 'Co-Founders (Abhishek & Raj)' },
+      { url: 'Assets/Run%20Club/Group.jpg', t: 'The Morning Squad' },
+      { url: 'Assets/Run%20Club/Strava%20Stat.jpeg', t: 'Strava Stats', fit: 'contain' },
+      { url: 'Assets/Run%20Club/Logo.png', t: 'Not A Run Club Crest', fit: 'contain' }
+    ],
+    upcoming: [
+      { d: 'EVERY SATURDAY • 6:45 AM', v: 'Saturday Morning Community Run', c: 'Bandra Carter Road Promenade • 5K Conversational Pace • Post-run coffee' },
+      { d: 'THIS MONTH • 7:30 AM', v: 'Bouldering & Grip Beta Session', c: 'Climbing Gym • Route solving & movement fundamentals' },
+      { d: 'WEEKEND SPECIAL • DAWN', v: 'Surf Paddle-Out & Cold Plunge', c: 'Coastal Break • Sunrise surf, breathwork & ice immersion' }
+    ],
+    places: ['Carter Road (Bandra)', 'Bandstand Promenade', 'Juhu Beach', 'Shivaji Park', 'Worli Seaface', 'Coastal Surf Breaks']
+  },
+
+  builds: {
+    hero: 'Downloadable Android APKs, system architecture & confidential projects.',
+    lead: 'Mobile Android utilities, production algorithmic systems, and confidential enterprise software engineering.',
+    apks: [
+      {
+        name: 'ReadStreak',
+        version: 'Android Native',
+        size: '58.5 MB',
+        date: 'BUILD 2026',
+        filename: 'ReadStreak.apk',
+        apkUrl: 'APKs/ReadStreak.apk',
+        desc: 'Daily reading habit companion and consistency tracker. Log daily pages, time active reading sessions, monitor reading streaks, and build unstoppable reading momentum.',
+        features: ['Reading Streak Tracking', 'Session Timer & Metrics', 'Book Progress Counter', 'Offline First'],
+        icon: '📚'
+      },
+      {
+        name: 'StringTuner',
+        version: 'Android Native',
+        size: '15.5 MB',
+        date: 'BUILD 2026',
+        filename: 'StringTuner.apk',
+        apkUrl: 'APKs/StringTuner.apk',
+        desc: 'Ultra-low-latency chromatic instrument tuner engineered for guitar, bass, and string players. Features high-precision real-time pitch detection and frequency analysis.',
+        features: ['Chromatic Pitch Detection', 'Ultra-Low Latency', 'Multi-Instrument Profiles', 'Stage Dark UI'],
+        icon: '🎸'
+      }
+    ],
+    systemOverview: {
+      title: 'NIFTY Forecasting Engine',
+      tag: 'SYSTEM ARCHITECTURE & PRODUCTION FORECASTING',
+      desc: 'Automated quantitative market forecasting pipeline. Downloads daily NIFTY 50 price actions, feeds them into four independent predictive models (no-change baseline, linear fit, tree-based ensemble, and deep neural network), aggregates probabilities, and tracks empirical forecasting accuracy against live market reality.',
+      docUrl: 'APKs/system_overview.html',
+      highlights: [
+        'Daily Automated Market Ingestion',
+        'Multi-Model Ensemble Pipeline',
+        'Interactive Architecture Spec & Mermaid Map',
+        'Live Accuracy Tracking Dashboard'
+      ]
+    },
+    confidential: [
+      {
+        name: 'Algorithmic Execution & Order Routing Engine',
+        tag: 'CONFIDENTIAL / PRIVATE CODEBASE',
+        badge: 'NDA PROTECTED',
+        desc: 'Proprietary low-latency trading infrastructure, real-time risk checks, and execution routing pipelines. Codebase and quantitative models are strictly proprietary under client non-disclosure agreements.',
+        tech: ['Low Latency', 'Private Infrastructure', 'Proprietary Algorithms', 'NDA Protected']
+      },
+      {
+        name: 'Enterprise SaaS User Journey & Product Engine',
+        tag: 'CONFIDENTIAL / CLIENT IP',
+        badge: 'NDA PROTECTED',
+        desc: 'Custom 0-to-1 core user workflows, distributed client architecture, and enterprise analytics pipelines engineered for select private venture clients. Source code restricted under mutual NDA.',
+        tech: ['Enterprise Scale', 'Full-Stack Architecture', 'Private Codebase', 'NDA Protected']
+      },
+      {
+        name: 'Stealth Audio DSP & Synthesizer Kernel',
+        tag: 'CONFIDENTIAL / PROPRIETARY R&D',
+        badge: 'PRIVATE IP',
+        desc: 'Custom digital signal processing algorithms, wavetable interpolation engines, and hardware control protocols developed for forthcoming private audio hardware/software ventures.',
+        tech: ['Audio DSP', 'Real-Time Kernel', 'Proprietary IP', 'Private Codebase']
+      }
+    ]
+  },
+
+  merch: {
+    hero: 'Real graphic tees, satirical philosophy & streetwear from Frankly Wearing.',
+    platform: 'Frankly Wearing',
+    totalSold: '1,000+',
+    statText: 'Over 1,000+ T-Shirts Sold Worldwide via Frankly Wearing',
+    storeUrl: 'https://www.franklywearing.com/creator/abhishek-vira',
+    notice: 'All designs conceived and created by Abhishek Vira under the moniker Literal Metaphor. Featuring existential philosophy, dark humor, relatable absurdity, and canine energy. Printed on high-grade combed organic cotton via Frankly Wearing with nationwide delivery.',
+    designs: [
+      {
+        n: 'Stay Bhondu Dog Dawg',
+        p: '₹ 799',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_450,c_scale/l_final_designs:seller_design_992362:f_20260327125122.png,w_180,h_200,c_fit,x_0,y_0/v1562776602/tshirts/black_f.jpg',
+        d: 'Stay unbothered, stay bhondu. The ultimate good dog energy graphic tee in classic black cotton.',
+        u: 'https://www.franklywearing.com/d/t-shirt-stay-bhondu-dog-dawg-992362',
+        tag: 'NEW DROP'
+      },
+      {
+        n: 'Silly Goose Syndrome',
+        p: '₹ 1049',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_900,c_scale,f_auto,q_auto/u_final_designs:seller_design_629473:f_20240820051822.png,w_400,h_500,c_fit,x_-170,y_-30,a_6,o_85/u_colors:Black.jpg,w_900,c_fill/v1680800061/oversized_tees/mockup1.webp',
+        d: 'Oversized streetwear tee diagnosing chronic, incurable silly goose behavior. Heavyweight premium drape.',
+        u: 'https://www.franklywearing.com/d/oversized-t-shirt-silly-goose-syndrome-629473',
+        tag: 'BESTSELLER'
+      },
+      {
+        n: 'Kafka Sisyphus Philosophy',
+        p: '₹ 1099',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_900,c_scale,f_auto,q_auto/u_final_designs:seller_design_779889:f_20250925110512.png,w_400,h_500,c_fit,x_-170,y_-30,a_6,o_85/u_colors:Black.jpg,w_900,c_fill/v1680800061/oversized_tees/mockup1.webp',
+        d: 'One must imagine Sisyphus in an existential bureaucracy. Heavyweight oversized boxy fit for thinkers.',
+        u: 'https://www.franklywearing.com/d/oversized-t-shirt-kafka-sisyphus-philosophy-779889',
+        tag: 'PHILOSOPHY'
+      },
+      {
+        n: 'Lesbians Eat What?!?!?! Pussy',
+        p: '₹ 1149',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_900,c_scale,f_auto,q_auto/u_final_designs:seller_design_660131:f_20241109073612.png,w_400,h_500,c_fit,x_-170,y_-30,a_6,o_85/u_colors:Black.jpg,w_900,c_fill/v1680800061/oversized_tees/mockup1.webp',
+        d: 'Bold, unapologetic typographic oversized tee that makes a statement before you even say a word.',
+        u: 'https://www.franklywearing.com/d/oversized-t-shirt-lesbians-eat-what-pussy-660131',
+        tag: 'ICONIC'
+      },
+      {
+        n: 'End Patriarchy Eat The Rich',
+        p: '₹ 799',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_450,c_scale/l_final_designs:seller_design_792748:f_20251106051834.png,w_180,h_200,c_fit,x_0,y_0/v1562776602/tshirts/pink_f.jpg',
+        d: 'Duality of righteous rebellion and soft pastel pink aesthetics. Combed organic cotton regular tee.',
+        u: 'https://www.franklywearing.com/d/t-shirt-end-patriarchy-eat-the-rich-792748',
+        tag: 'POPULAR'
+      },
+      {
+        n: 'Kind of Heart Dumb of Ass',
+        p: '₹ 1049',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_900,c_scale,f_auto,q_auto/u_final_designs:seller_design_629485:f_20240820053429.png,w_400,h_500,c_fit,x_-170,y_-30,a_6,o_85/u_colors:Black.jpg,w_900,c_fill/v1680800061/oversized_tees/mockup1.webp',
+        d: 'Pure intentions, questionable life choices. Oversized drop-shoulder tee for the lovable chaos in your life.',
+        u: 'https://www.franklywearing.com/d/oversized-t-shirt-kind-of-heart-dumb-of-ass-629485',
+        tag: 'FAN FAVORITE'
+      },
+      {
+        n: 'ADHD Dog',
+        p: '₹ 949',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_900,c_scale,f_auto,q_auto/u_final_designs:seller_design_668639:f_20241206045626.png,w_400,h_500,c_fit,x_-170,y_-30,a_6,o_85/u_colors:White.jpg,w_900,c_fill/v1680800061/oversized_tees/mockup1.webp',
+        d: '37 browser tabs open in your brain at all times. Crisp white oversized tee with distressed canine sketch.',
+        u: 'https://www.franklywearing.com/d/oversized-t-shirt-adhd-dog-668639',
+        tag: 'RELATABLE'
+      },
+      {
+        n: 'Lukewarm Regards',
+        p: '₹ 999',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_900,c_scale,f_auto,q_auto/u_final_designs:seller_design_636681:f_20240904110627.png,w_400,h_500,c_fit,x_-170,y_-30,a_6,o_85/u_colors:Black.jpg,w_900,c_fill/v1680800061/oversized_tees/mockup1.webp',
+        d: 'When "Best regards" feels too warm and "Fuck off" gets you sent to HR. The ultimate passive-aggressive tee.',
+        u: 'https://www.franklywearing.com/d/oversized-t-shirt-lukewarm-regards-636681',
+        tag: 'OFFICE SARCASM'
+      },
+      {
+        n: 'Kafka Was A Pick Me Girlie',
+        p: '₹ 989',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_900,c_scale,f_auto,q_auto/u_final_designs:seller_design_787769:f_20251021094225.png,w_400,h_500,c_fit,x_-170,y_-30,a_6,o_85/u_colors:Black.jpg,w_900,c_fill/v1680800061/oversized_tees/mockup1.webp',
+        d: 'Letters to Milena decoded into modern dating slang. Heavyweight oversized boxy black cotton.',
+        u: 'https://www.franklywearing.com/d/oversized-t-shirt-kafka-was-a-pick-me-girlie-787769',
+        tag: 'LIT MEME'
+      },
+      {
+        n: 'Freud Sigmund Mom Kafka',
+        p: '₹ 819',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_450,c_scale/l_final_designs:seller_design_783942:f_20251009065444.png,w_180,h_200,c_fit,x_0,y_0/v1562776602/tshirts/black_f.jpg',
+        d: 'Psychoanalysis meets literary trauma on a classic black cotton tee. Do not tell your therapist.',
+        u: 'https://www.franklywearing.com/d/t-shirt-freud-sigmund-mom-kafka-783942',
+        tag: 'CLASSIC'
+      },
+      {
+        n: 'Fitness Run Runner Strava',
+        p: '₹ 989',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_900,c_scale,f_auto,q_auto/u_final_designs:seller_design_988564:f_20260324063403.png,w_400,h_500,c_fit,x_-170,y_-30,a_6,o_85/u_colors:Black.jpg,w_900,c_fill/v1680800061/oversized_tees/mockup1.webp',
+        d: 'If it is not on Strava, did the run even happen? Dedicated to the Not A Run Club dawn patrol crew.',
+        u: 'https://www.franklywearing.com/d/oversized-t-shirt-fitness-run-runner-strava-988564',
+        tag: 'RUN CLUB'
+      },
+      {
+        n: 'Kafka Nietzsche Camus Phil',
+        p: '₹ 989',
+        img: 'https://res.cloudinary.com/dzdgpwtox/image/upload/w_900,c_scale,f_auto,q_auto/u_final_designs:seller_design_787782:f_20251021101524.png,w_400,h_500,c_fit,x_-170,y_-30,a_6,o_85/u_colors:Black.jpg,w_900,c_fill/v1680800061/oversized_tees/mockup1.webp',
+        d: 'The Holy Trinity of existential dread and absurdist rebellion printed on heavyweight streetwear tee.',
+        u: 'https://www.franklywearing.com/d/oversized-t-shirt-kafka-neitzsche-camus-phil-787782',
+        tag: 'PHILOSOPHY'
+      }
+    ]
+  },
+
+  services: {
+    hero: 'Bespoke technology builds, live music performance & viral marketing.',
+    lead: 'A rare hybrid intersection: engineering production software, commanding live music stages, and crafting viral organic media campaigns with millions of views. Available for select software contracts, live events, music instruction, and growth engagements.',
+    sections: [
+      {
+        id: 'tech',
+        category: 'IN TECH',
+        tagline: 'Code, Architecture & Product Engineering',
+        icon: '💻',
+        items: [
+          {
+            title: 'Build Beautiful Websites',
+            desc: 'Bespoke, high-aesthetic web experiences, interactive 2D/3D canvas sites, portfolio platforms, and high-converting landing pages built with clean code and uncompromising visual taste.',
+            chips: ['Interactive Canvas & WebGL', 'Responsive & Mobile-First', 'Performance & SEO', 'Bespoke Visual Design']
+          },
+          {
+            title: 'Build Software & SaaS Products',
+            desc: 'End-to-end full-stack software and SaaS engineering. From database architecture and custom APIs to responsive web apps, native Android tools, and production-ready systems.',
+            chips: ['Full-Stack Web Apps', 'SaaS MVPs & Architectures', 'Custom APIs & Backends', 'Native Android Utilities']
+          },
+          {
+            title: 'Consult With Regards to Your Product',
+            desc: '0-to-1 strategic product consulting, roadmap design, and user experience teardowns. Helping founders find product-market fit, streamline feature scope, and build high-velocity engineering workflows.',
+            chips: ['0-to-1 Product Roadmaps', 'UX Architecture Teardowns', 'Technical Feasibility & Stack', 'Founder Advisory & Strategy']
+          }
+        ]
+      },
+      {
+        id: 'music',
+        category: 'IN MUSIC',
+        tagline: 'Live Performance, Coaching & Audio Production',
+        icon: '🎸',
+        items: [
+          {
+            title: 'Perform For Your Events',
+            desc: 'Electrifying live performances tailored for clubs, private venues, weddings, corporate events, and festivals. All sorts of music genres sorted: Western, Bollywood, Jazz, Classic Rock, Metal, Pop-Punk, and Indie.',
+            chips: ['Full Band Shows (VenomBerries / LeadFeather)', 'Solo Acoustic / Electronic Sets', 'Versatile Multi-Genre Setlists', 'Private Events & Festivals']
+          },
+          {
+            title: 'Teach You How to Play & Sing',
+            desc: 'Hands-on, stage-tested music education. Personalized coaching to teach you how to play Guitar, Bass, Keys, and Drums, and master modern singing technique with control, pitch, and stage confidence.',
+            chips: ['Guitar (Electric / Acoustic)', 'Bass Guitar (Groove, Slap & Pocket)', 'Keys & Synthesizers', 'Drums & Vocal Technique']
+          },
+          {
+            title: 'Music Production & Songwriting',
+            desc: 'Professional songwriting, musical composition, synthesizer tracking, and audio production. Crafting infectious melodies, punchy basslines, and polished final arrangements for artists and commercial media.',
+            chips: ['Original Songwriting & Hooks', 'Synth & Analog Sound Design', 'Arrangement & Tracking', 'Commercial & Sync Jingles']
+          }
+        ]
+      },
+      {
+        id: 'marketing',
+        category: 'IN MARKETING',
+        tagline: 'Viral Short-Form Video & Social Media Growth',
+        icon: '📱',
+        items: [
+          {
+            title: 'Social Media Strategy & Audience Growth',
+            desc: 'Strategic social media consulting built on actual cultural resonance rather than useless corporate buzzwords. Turn casual scrollers into loyal communities and active customers.',
+            chips: ['Community Building', 'Algorithmic Distribution Strategy', 'Brand Tone & Narrative', 'Platform Growth Playbooks']
+          },
+          {
+            title: 'Viral Short-Form Content (Millions in Views)',
+            desc: 'Hailing with multiple original videos hitting over millions of views individually. Proven frameworks for first-second visual hooks, retention curves, pacing, and viral audience psychology.',
+            chips: ['Multi-Million View Hooks', 'High-Retention Video Editing', 'Relatable Storytelling', 'Trend Capitalization']
+          },
+          {
+            title: 'End-to-End Content Resolution',
+            desc: 'All sorts of short-form content headaches taken care of. From raw concept ideation and filming guidelines to final edit cuts, sound design hooks, captions, and publishing strategy.',
+            chips: ['Concept to Final Export', 'Audio & Sound Hook Selection', 'Creative Direction & Filming Prep', 'Analytics & Iteration']
+          }
+        ]
+      }
+    ]
+  },
+
+  about: {
+    hero: 'Maker, musician, runner & curious human.',
+    avatarImage: 'Assets/Music/Main.jpg',
+    mainBio: 'I make music, code, run, surf, climb, do coke, your mom and your dad(only on Wednesdays)',
+    extendedBio: [
+      "Welcome to my little corner of the internet. I'm a multi-hyphenate creator living at the wild intersection of live sound, software architecture, streetwear, and relentless movement.",
+      "I believe the modern web lost its soul when everything became sterile corporate SaaS templates. This site is my playground: an authentic, unfiltered, 8-bit space where every door opens into one of my real-world obsessions.",
+      "Whether I'm melting faces on stage with a synthesizer as Shut Up Vira, shipping production code for clients, or pacing friends at dawn with Not A Run Club, I play the game full out."
+    ],
+    journey: [
+      {
+        year: '2018',
+        title: 'The Physics Defection',
+        subtitle: 'Graduated in Physics → Chose Sound Waves over Academia',
+        desc: 'Completed a degree in Physics. Loved the mathematical purity, but realized equations could never match the raw visceral power of live music. Formally walked away from academia to plunge headfirst into the chaotic music industry with zero safety net.',
+        tags: ['Physics BS', 'The Leap', 'Music Business']
+      },
+      {
+        year: '2018 – 2022',
+        title: 'Sound, Stages & Stadiums',
+        subtitle: 'Audio Engineering, BookMyShow & Live Alliances',
+        desc: 'Began teaching music to survive. Simultaneously interned as a live sound engineer learning analog consoles, signal paths, and acoustics. Joined BookMyShow in live events marketing, rapidly leveling up to Producer and Strategic Alliances managing high-stakes live entertainment ecosystems—all while never dropping teaching.',
+        tags: ['Sound Engineer', 'BookMyShow', 'Live Producer', 'Strategic Alliances', 'Educator']
+      },
+      {
+        year: '2023',
+        title: '0-to-1 Startup Foundry',
+        subtitle: 'Founding Member & Senior PM at elynker',
+        desc: 'Joined elynker as a founding team member and Senior Product Manager. Led 0-to-1 feature roadmaps, orchestrated engineering sprints, shaped consumer user journeys, and learned how high-growth tech platforms are built under intense pressure.',
+        tags: ['elynker', 'Founding PM', 'Product Strategy', '0-to-1 Engine']
+      },
+      {
+        year: '2025',
+        title: 'The Stage Reclaim & 1,000+ Tees',
+        subtitle: 'Live Musicianship, Frankly Wearing & Not A Run Club',
+        desc: 'Stepped away from the corporate desk to pursue live musicianship full-time. Launched an experimental t-shirt line on Frankly Wearing under the alias Literal Metaphor—rapidly scaling it to over 1,000+ shirts sold. That same year, co-founded Not A Run Club with Raj Varshney, building an authentic, pace-free running crew.',
+        tags: ['Shut Up Vira', 'Literal Metaphor', 'Frankly Wearing', '1,000+ Tees Sold', 'Not A Run Club']
+      },
+      {
+        year: '2026',
+        title: 'The Client Software Studio',
+        subtitle: 'Bespoke Software Development Engine',
+        desc: 'Began picking up software building requests for select clients and founders worldwide—crafting web platforms, tools, and custom software systems with product-level polish and rapid turnaround.',
+        tags: ['Client Software', 'Full-Stack Studio', 'Rapid Shipping']
+      },
+      {
+        year: '2026 ACTIVE',
+        title: 'The Multiverse Hustle',
+        subtitle: 'Current Active Chapter & Live Ventures',
+        desc: 'Currently firing on every cylinder: releasing music under the moniker Shut Up Vira, performing and touring with bands VenomBerries and LeadFeather, teaching music, building freelance software projects for clients, scaling Frankly Wearing streetwear to thousands, and leading Not A Run Club every week.',
+        tags: ['Shut Up Vira', 'VenomBerries', 'LeadFeather', 'Not A Run Club', 'Freelance Studio', 'Teaching'],
+        isCurrent: true
+      }
+    ],
+    int: [
+      'Analog poly-synths & tape loops',
+      'Not A Run Club sunrise 10Ks',
+      'Frankly Wearing streetwear typography',
+      'Cold-water ocean surfing & climbing',
+      'Raw canvas & chiptune audio programming',
+      'Specialty single-origin Ethiopian coffee'
+    ]
+  },
+
+  egg: {
+    npc: [
+      "Woof! (Translation: 'Did you know Abhishek once played a 3-hour synth set fueled entirely by cold brew?')",
+      "Arf! 'Try wandering to the trees in the far corner... rumor has it there is a secret shrine!'",
+      "*Barks excitedly* 'Running pace doesn't matter, treats at the finish line do.'",
+      "Woof! 'Abhishek coded this whole world using zero frameworks and raw canvas power. Pretty neat, huh?'"
+    ],
+    sign: [
+      'ABHISHEK TOWN. POPULATION: 1 (+ BUSTER THE DOG).',
+      'NORTH: MUSIC HOUSE. WEST: THE LAB. EAST: RUN CLUB. SOUTH: MERCH & SERVICES. CENTER: ME.',
+      'STILL JUST A SIGNPOST. KEEP EXPLORING!'
+    ],
+    tree: [
+      "IT'S A POKÉMON-STYLE TREE. IT SAYS NOTHING.",
+      'YOU HUG THE TREE. THE TREE IS UNMOVED.',
+      'A BIRD LEAVES. YOU FEEL GENTLY JUDGED.'
+    ],
+    cave: [
+      '??? THE SECRET CHIPTUNE SHRINE ???',
+      'A DRAFTY WHISPER: "YOU FOUND THE HIDDEN GLADE. KEEP MAKING WEIRD THINGS."'
+    ]
+  }
+};
+
+/* ==========================================================================
+   SUB-PAGES: Framed inside the Image 2 Card Container
+   ========================================================================== */
+const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';');
+
+// 4-Point Star SVG Watermark (Image 2)
+const STAR_WATERMARK = `
+  <svg class="star-watermark" viewBox="0 0 100 100">
+    <path d="M50 0 C50 35, 65 50, 100 50 C65 50, 50 65, 50 100 C50 65, 35 50, 0 50 C35 50, 50 35, 50 0 Z"/>
+  </svg>
+`;
+
+const renderInsideFrame = (breadcrumb, title, subtitle, contentHtml) => `
+  <div class="inside-page-frame">
+    ${STAR_WATERMARK}
+    <span class="breadcrumb-tag">${breadcrumb}</span>
+    <h2 class="page-hero-title">${title}</h2>
+    <p class="page-hero-subtitle">${subtitle}</p>
+    ${contentHtml}
+    <div style="margin-top:40px;padding-top:20px;border-top:1.5px solid #dcd5c7">
+      <a class="dark-action-btn" href="#/">← BACK TO THE WORLD</a>
+    </div>
+  </div>
+`;
+
+// Robust image renderer with graceful fallback to retro pixel pattern
+const renderImg = (src, alt, cls = '', fallbackText = 'IMAGE') => {
+  if (!src) {
+    return `<div class="${cls} ph-box" role="img" aria-label="${esc(alt)}"><span>${esc(fallbackText)}</span></div>`;
+  }
+  return `<img class="${cls}" src="${esc(src)}" alt="${esc(alt)}" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';" /><div class="${cls} ph-box" style="display:none;" role="img" aria-label="${esc(alt)}"><span>${esc(fallbackText)}</span></div>`;
+};
+
+// Android APK Download Trigger
+window.downloadApk = function(filename, url) {
+  const a = document.createElement('a');
+  a.href = url || '#';
+  a.download = filename || 'app.apk';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+// Cover Image Fit Toggle (Switch between cinematic framing & 100% full uncropped view)
+window.toggleCoverFit = function(btn) {
+  const banner = btn.closest('.page-cover-banner');
+  if (!banner) return;
+  const img = banner.querySelector('.page-cover-img');
+  if (!img) return;
+  if (img.style.objectFit === 'contain') {
+    img.style.objectFit = '';
+    img.style.background = '';
+    btn.textContent = '🔍 FULL SQUAD';
+  } else {
+    img.style.objectFit = 'contain';
+    img.style.background = '#06130e';
+    btn.textContent = '⤢ FILL COVER';
+  }
+};
+
+const P = {
+  music: () => {
+    const m = D.music;
+    return renderInsideFrame('VIRA ISLAND / SPOTIFY & MUSIC HOUSE', 'Music House', m.hero, `
+      <!-- Cover Banner -->
+      <div class="page-cover-banner">
+        ${renderImg(m.coverImage, 'Music House Cover', 'page-cover-img', 'SHUT UP VIRA')}
+        <div class="cover-overlay-badge">${m.coverBadge}</div>
+      </div>
+
+      <div class="dashed-sub-box">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+          <span class="dashed-label">ARTIST INTRODUCTION</span>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="tag-chip" style="background:#0f2d23;color:var(--gold);font-weight:700">MONIKER: ${esc(m.moniker)}</span>
+            ${m.bands.map(b => `<span class="tag-chip">${esc(b)}</span>`).join('')}
+          </div>
+        </div>
+        <div class="dashed-lead">${m.intro.map(t => `<p style="margin:0 0 10px">${t}</p>`).join('')}</div>
+        <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:8px">
+          ${Object.entries(m.stream).map(([k, v]) => `<a class="light-btn" href="${v}" target="_blank" rel="noopener">${k} ↗</a>`).join('')}
+        </div>
+      </div>
+
+      <!-- Official Spotify Artist Player Embed -->
+      <div class="dashed-sub-box" style="padding:14px;background:#0c1d17;border-color:#1db954">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="display:inline-block;width:10px;height:10px;background:#1db954;border-radius:50%;box-shadow:0 0 8px #1db954"></span>
+            <span class="dashed-label" style="color:var(--gold);margin:0">SPOTIFY VERIFIED ARTIST PLAYER</span>
+          </div>
+          <a class="light-btn" href="https://open.spotify.com/artist/0XRsRVwlKw9vc5bKgJR2lA" target="_blank" rel="noopener" style="color:#1db954;border-color:#1db954">OPEN IN SPOTIFY APP ↗</a>
+        </div>
+        <iframe style="border-radius:8px;width:100%;height:152px;border:none" src="https://open.spotify.com/embed/artist/0XRsRVwlKw9vc5bKgJR2lA?utm_source=generator&theme=0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+
+      <div class="section-sh">
+        <span>SPOTIFY RELEASES & POPULAR TRACKS</span>
+      </div>
+      <div class="content-grid">
+        ${m.releases.map(r => `
+          <div class="content-card">
+            <div style="width:100%;aspect-ratio:1;overflow:hidden;border:1.5px solid #d5cec0;border-radius:3px;margin-bottom:12px;background:#0f2d23">
+              ${renderImg(r.img, r.t, 'page-cover-img', r.t)}
+            </div>
+            <span class="content-meta">${esc(r.y)}</span>
+            <h3 style="margin-bottom:2px">${esc(r.t)}</h3>
+            ${r.artist ? `<div style="font:600 12px var(--mono);color:#4e705f;margin-bottom:8px">${esc(r.artist)}</div>` : ''}
+            <p>${esc(r.d)}</p>
+            <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap">
+              <a class="dark-action-btn" style="padding:8px 12px;font-size:11px" href="${r.u}" target="_blank" rel="noopener">LISTEN ON SPOTIFY ↗</a>
+              <button class="light-btn" onclick="playAudioTrack('${esc(r.preview || '')}', ${JSON.stringify(r.pattern || [])}, this)">▶ 30s PREVIEW</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Live Stage & Performance Gallery -->
+      ${m.gallery && m.gallery.length ? `
+        <div class="section-sh">
+          <span>LIVE STAGE & PERFORMANCE GALLERY</span>
+        </div>
+        <div class="gallery-grid">
+          ${m.gallery.map(g => `
+            <div class="gallery-card">
+              <div class="gallery-img-wrap">
+                ${renderImg(g.url, g.t, 'gallery-img' + (g.fit === 'contain' ? ' fit-contain' : ''), g.t)}
+              </div>
+              <div class="gallery-content" style="padding:10px 14px">
+                <div style="font:600 13px var(--sans);color:var(--ink);letter-spacing:0.01em">${esc(g.t)}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <div class="section-sh">
+        <span>UPCOMING LIVE SHOWS & TOUR DATES</span>
+      </div>
+      <div class="dashed-sub-box" style="padding:16px 18px;margin-bottom:16px;background:#f5f2e9;border:1.5px solid var(--frame-bg);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div style="flex:1;min-width:240px">
+          <div style="font:700 11px var(--mono);color:#0f2d23;letter-spacing:1px;margin-bottom:4px">✦ VENOMBERRIES TOUR & GIG DATES</div>
+          <div style="font:500 14px var(--sans);color:var(--ink)">For all upcoming tour dates, gig announcements, secret pop-ups, and tickets, check out VenomBerries on Instagram:</div>
+        </div>
+        <a class="dark-action-btn" href="https://www.instagram.com/thevenomberriesband/" target="_blank" rel="noopener" style="padding:10px 16px;font-size:11px">
+          CHECK @THEVENOMBERRIESBAND ↗
+        </a>
+      </div>
+      <ul class="dashed-list" style="margin-bottom:28px">
+        ${m.upcomingShows.map(s => `
+          <li>
+            <div>
+              <div class="list-title">${esc(s.v)}</div>
+              <div class="list-sub">${esc(s.c)}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <span class="tag-chip" style="background:#edf4ef;color:#174235;font-weight:700">${esc(s.status)}</span>
+              <span class="list-date">${esc(s.d)}</span>
+              <a class="light-btn" href="${s.u}" target="_blank" rel="noopener">INSTAGRAM / DETAILS ↗</a>
+            </div>
+          </li>
+        `).join('')}
+      </ul>
+
+      <!-- Past Live Shows Archive -->
+      <div class="section-sh">
+        <span>PAST LIVE SHOWS ARCHIVE</span>
+      </div>
+      <ul class="dashed-list">
+        ${m.pastShows.map(s => `
+          <li>
+            <div>
+              <div class="list-title" style="color:var(--ink)">${esc(s.name)}</div>
+              <div class="list-sub">📍 ${esc(s.venue)} • ${esc(s.city)}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <span class="tag-chip" style="background:#e8ece9;color:#2c4c3b;font-weight:700">COMPLETED SHOW</span>
+              <span class="list-date" style="font-weight:700;color:#174235">${esc(s.date)}</span>
+            </div>
+          </li>
+        `).join('')}
+      </ul>
+    `);
+  },
+
+  builds: () => {
+    const b = D.builds;
+    return renderInsideFrame('VIRA ISLAND / BUILDS, APKS & LAB', 'The Lab', b.hero, `
+      <div class="dashed-sub-box">
+        <span class="dashed-label">ABOUT THE LAB</span>
+        <p class="dashed-lead">${b.lead}</p>
+      </div>
+
+      <!-- Downloadable Android APKs -->
+      <div class="section-sh">
+        <span>DOWNLOADABLE ANDROID APKS (.apk)</span>
+      </div>
+      <div class="apk-grid">
+        ${b.apks.map(apk => `
+          <div class="apk-card">
+            <div class="apk-top-row">
+              <span class="apk-badge-android">🤖 ANDROID APK</span>
+              <span class="apk-version-pill">${esc(apk.version)}</span>
+            </div>
+            <h3 class="apk-title">${apk.icon} ${esc(apk.name)}</h3>
+            <div class="apk-meta-row">
+              <span>💾 ${esc(apk.size)}</span>
+              <span>✦ ${esc(apk.date)}</span>
+            </div>
+            <p class="apk-desc">${esc(apk.desc)}</p>
+            <div style="margin-bottom:16px">
+              ${apk.features.map(f => `<span class="tag-chip">${esc(f)}</span>`).join('')}
+            </div>
+            <a class="apk-btn" href="${esc(apk.apkUrl)}" download="${esc(apk.filename)}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;text-align:center">
+              ⬇ DOWNLOAD APK (${esc(apk.size)})
+            </a>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- System Architecture & Production Forecasting -->
+      <div class="section-sh">
+        <span>SYSTEM ARCHITECTURE & PRODUCTION FORECASTING</span>
+      </div>
+      <div class="dashed-sub-box" style="padding:22px;border:1.5px solid var(--ink);background:#fbfaf6">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+          <div>
+            <span class="content-meta" style="color:#0e6e5e;font-weight:700">${b.systemOverview.tag}</span>
+            <h3 style="font:700 22px var(--sans);color:var(--ink);margin:4px 0">${esc(b.systemOverview.title)}</h3>
+          </div>
+          <a class="dark-action-btn" href="${b.systemOverview.docUrl}" target="_blank" rel="noopener" style="padding:10px 18px;font-size:12px">
+            VIEW SYSTEM OVERVIEW ↗
+          </a>
+        </div>
+        <p class="dashed-lead" style="margin-bottom:16px;color:#334155">${esc(b.systemOverview.desc)}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${b.systemOverview.highlights.map(h => `<span class="tag-chip" style="background:#edf4ef;color:#0e6e5e;font-weight:600">✦ ${esc(h)}</span>`).join('')}
+        </div>
+      </div>
+
+      <!-- Confidential Projects (Private Codebases) -->
+      <div class="section-sh">
+        <span>CONFIDENTIAL PROJECTS (PRIVATE CODEBASES)</span>
+      </div>
+      <div class="content-grid">
+        ${b.confidential.map(p => `
+          <div class="content-card" style="border-left:3.5px solid #b8860b">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span class="content-meta" style="color:#b8860b;font-weight:700">${esc(p.tag)}</span>
+              <span class="tag-chip" style="background:#fff3cd;color:#856404;font-size:10px;font-weight:700;margin:0">🔒 ${esc(p.badge)}</span>
+            </div>
+            <h3 style="margin-bottom:8px">${esc(p.name)}</h3>
+            <p>${esc(p.desc)}</p>
+            <div style="margin-top:auto;padding-top:12px;display:flex;flex-wrap:wrap;gap:6px">
+              ${p.tech.map(t => `<span class="tag-chip">${esc(t)}</span>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `);
+  },
+
+  run: () => {
+    const r = D.run;
+    return renderInsideFrame('VIRA ISLAND / NOT A RUN CLUB', r.clubName, r.hero, `
+      <!-- Cover Banner with Dedicated Squad Framing -->
+      <div class="page-cover-banner run-cover">
+        ${renderImg(r.coverImage, 'Not A Run Club Cover', 'page-cover-img', 'NOT A RUN CLUB')}
+        <div class="cover-overlay-badge">${r.coverBadge}</div>
+        <button class="cover-expand-btn" onclick="toggleCoverFit(this)" title="Toggle uncropped full view">🔍 FULL SQUAD</button>
+      </div>
+
+      <div class="dashed-sub-box">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap">
+          ${r.logo ? `<img src="${r.logo}" alt="Not A Run Club Logo" style="height:62px;width:auto;object-fit:contain;background:#fff;padding:4px 10px;border:1.5px solid #d5cec0;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,0.04)" />` : ''}
+          <div style="flex:1;min-width:180px">
+            <span class="dashed-label">COMMUNITY MANIFESTO</span>
+            <div><span class="tag-chip" style="background:#0f2d23;color:var(--gold);font-weight:700">${esc(r.founders)}</span></div>
+          </div>
+        </div>
+        <p class="dashed-lead">${r.lead}</p>
+        <div style="margin-top:14px">
+          ${r.metrics.map(m => `<span class="tag-chip">${m}</span>`).join('')}
+        </div>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+          <a class="dark-action-btn" href="${r.links.whatsapp}" target="_blank" rel="noopener">💬 WHATSAPP COMMUNITY ↗</a>
+          <a class="light-btn" href="${r.links.instagram}" target="_blank" rel="noopener">📸 @NOTARUNCLUBMUMBAI ↗</a>
+          <a class="light-btn" href="${r.links.strava}" target="_blank" rel="noopener">🏃 STRAVA CLUB ↗</a>
+        </div>
+      </div>
+
+      <!-- Outdoor Adventures & Community Pillars -->
+      <div class="section-sh">
+        <span>OUTDOOR ADVENTURES & COMMUNITY EXPERIENCES</span>
+      </div>
+      <div class="content-grid" style="margin-bottom:24px">
+        ${r.adventures.map(adv => `
+          <div class="content-card">
+            <div style="font-size:26px;margin-bottom:8px">${adv.icon}</div>
+            <h3 style="margin-bottom:6px">${esc(adv.name)}</h3>
+            <p>${esc(adv.desc)}</p>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Run Club Gallery -->
+      <div class="section-sh">
+        <span>RUN CLUB GALLERY & SQUADS</span>
+      </div>
+      <div class="gallery-grid">
+        ${r.gallery.map(g => `
+          <div class="gallery-card">
+            <div class="gallery-img-wrap">
+              ${renderImg(g.url, g.t, 'gallery-img' + (g.fit === 'contain' ? ' fit-contain' : ''), g.t)}
+            </div>
+            <div class="gallery-content" style="padding:10px 14px">
+              <div style="font:600 13px var(--sans);color:var(--ink);letter-spacing:0.01em">${esc(g.t)}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="section-sh">
+        <span>SATURDAY SCHEDULE & UPCOMING ADVENTURES</span>
+      </div>
+      <ul class="dashed-list">
+        ${r.upcoming.map(u => `
+          <li>
+            <div>
+              <div class="list-title">${esc(u.v)}</div>
+              <div class="list-sub">${esc(u.c)}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <span class="list-date">${esc(u.d)}</span>
+              <a class="light-btn" href="${r.links.whatsapp}" target="_blank" rel="noopener">JOIN VIA WHATSAPP ↗</a>
+            </div>
+          </li>
+        `).join('')}
+      </ul>
+
+      <div class="section-sh">
+        <span>WHERE WE RUN (MUMBAI)</span>
+      </div>
+      <div style="margin-bottom:20px">
+        ${r.places.map(p => `<span class="tag-chip">${p}</span>`).join('')}
+      </div>
+    `);
+  },
+
+  merch: () => {
+    const m = D.merch;
+    return renderInsideFrame('VIRA ISLAND / FRANKLY WEARING', 'Merch Shop', m.hero, `
+      <!-- Total T-Shirts Sold Stat Banner (Frankly Wearing) -->
+      <div class="merch-stat-banner">
+        <div>
+          <div class="merch-stat-number">${esc(m.totalSold)} T-SHIRTS</div>
+          <div class="merch-stat-label">${esc(m.statText)}</div>
+        </div>
+        <a class="merch-redirect-btn" href="${m.storeUrl}" target="_blank" rel="noopener">
+          SHOP FULL STORE ON FRANKLY WEARING ↗
+        </a>
+      </div>
+
+      <div class="dashed-sub-box">
+        <span class="dashed-label">COLLECTION NOTICE & QUALITY</span>
+        <p class="dashed-lead">${m.notice}</p>
+      </div>
+
+      <div class="section-sh">
+        <span>TOP DESIGNS ON FRANKLY WEARING</span>
+      </div>
+      <div class="content-grid">
+        ${m.designs.map(item => `
+          <div class="content-card">
+            <div class="merch-img-wrap">
+              ${renderImg(item.img, item.n, 'merch-img', item.tag)}
+            </div>
+            <span class="content-meta">${esc(item.tag)}</span>
+            <h3>${esc(item.n)}</h3>
+            <div><span class="merch-price-tag">${esc(item.p)}</span></div>
+            <p>${esc(item.d)}</p>
+            <div style="margin-top:auto">
+              <a class="dark-action-btn" style="padding:10px 16px;font-size:11px;width:100%;box-sizing:border-box;justify-content:center" href="${item.u}" target="_blank" rel="noopener">
+                BUY ON FRANKLY WEARING ↗
+              </a>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `);
+  },
+
+  services: () => {
+    const s = D.services;
+    return renderInsideFrame('VIRA ISLAND / STRATEGY, MUSIC & CODE', 'Services', s.hero, `
+      <div class="dashed-sub-box">
+        <span class="dashed-label">WHAT I DO</span>
+        <p class="dashed-lead">${s.lead}</p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <a class="light-btn" href="#tech-services">💻 IN TECH</a>
+          <a class="light-btn" href="#music-services">🎸 IN MUSIC</a>
+          <a class="light-btn" href="#marketing-services">📱 IN MARKETING</a>
+        </div>
+      </div>
+
+      ${s.sections.map(sec => `
+        <div class="section-sh" id="${sec.id}-services" style="margin-top:28px">
+          <span>${sec.icon} ${sec.category} — ${esc(sec.tagline)}</span>
+        </div>
+        <div class="content-grid" style="margin-bottom:20px">
+          ${sec.items.map(item => `
+            <div class="content-card">
+              <span class="content-meta">${sec.category}</span>
+              <h3 style="margin-bottom:8px">${esc(item.title)}</h3>
+              <p>${esc(item.desc)}</p>
+              <div style="margin-top:auto;padding-top:12px;display:flex;flex-wrap:wrap;gap:6px">
+                ${item.chips.map(c => `<span class="tag-chip">${esc(c)}</span>`).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('')}
+
+      <div class="section-sh">
+        <span>NEED HELP WITH SOMETHING? LET'S TALK</span>
+      </div>
+      <div class="dashed-sub-box">
+        <form onsubmit="event.preventDefault(); alert('Message dispatched! Abhishek will get back to you shortly.'); this.reset();">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:12px;margin-bottom:12px">
+            <input type="text" class="form-input" placeholder="YOUR NAME" required style="margin-bottom:0">
+            <input type="email" class="form-input" placeholder="YOUR EMAIL" required style="margin-bottom:0">
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font:700 11px var(--mono);color:var(--muted);display:block;margin-bottom:6px">PRIMARY INQUIRY DOMAIN</label>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <label style="font:600 12px var(--sans);cursor:pointer;display:inline-flex;align-items:center;gap:5px">
+                <input type="radio" name="domain" value="tech" checked> 💻 Tech & SaaS
+              </label>
+              <label style="font:600 12px var(--sans);cursor:pointer;display:inline-flex;align-items:center;gap:5px">
+                <input type="radio" name="domain" value="music"> 🎸 Live Music & Coaching
+              </label>
+              <label style="font:600 12px var(--sans);cursor:pointer;display:inline-flex;align-items:center;gap:5px">
+                <input type="radio" name="domain" value="marketing"> 📱 Social Media & Short-Form
+              </label>
+            </div>
+          </div>
+          <textarea class="form-input" rows="3" placeholder="WHAT ARE WE BUILDING, LAUNCHING OR SCHEMING TOGETHER?" required></textarea>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <button type="submit" class="dark-action-btn">SEND MESSAGE ✦</button>
+            <a class="light-btn" href="mailto:${D.email}">EMAIL DIRECTLY (${D.email})</a>
+          </div>
+        </form>
+      </div>
+    `);
+  },
+
+  about: () => {
+    const a = D.about;
+    return renderInsideFrame('VIRA ISLAND / THE HUMAN', 'About Me', a.hero, `
+      <div class="about-hero-grid">
+        <div class="about-avatar-card">
+          <div class="about-avatar-img-wrap">
+            ${renderImg(a.avatarImage, 'Abhishek Vira', 'about-avatar-img', 'ABHISHEK VIRA')}
+          </div>
+          <div style="font:700 15px var(--sans);color:var(--ink);margin-bottom:4px">Abhishek Vira</div>
+          <div style="font:10px var(--mono);color:#6a7e72;margin-bottom:12px">BOMBAY / NYC ✦ SOUND & TECH</div>
+          <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap">
+            <a class="light-btn" href="#/music">♫ MUSIC</a>
+            <a class="light-btn" href="#/run">↗ RUN CLUB</a>
+            <a class="light-btn" href="#/builds">✱ THE LAB</a>
+          </div>
+        </div>
+
+        <div>
+          <!-- Main Raw Bio Quote -->
+          <div class="about-main-bio-quote">
+            "${esc(a.mainBio)}"
+          </div>
+
+          <div class="dashed-sub-box" style="margin-bottom:0">
+            <span class="dashed-label">THE EXTENDED PERSPECTIVE</span>
+            <div class="dashed-lead">${a.extendedBio.map(t => `<p style="margin:0 0 10px">${esc(t)}</p>`).join('')}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rewritten Journey Map -->
+      <div class="section-sh">
+        <span>JOURNEY MAP: FROM PHYSICS TO THE MULTIVERSE</span>
+      </div>
+      <div class="journey-map">
+        ${a.journey.map(j => `
+          <div class="journey-node ${j.isCurrent ? 'current' : ''}">
+            <div class="journey-dot"></div>
+            <div class="journey-card">
+              <div class="journey-header-row">
+                <span class="journey-year-badge">${esc(j.year)}</span>
+                ${j.isCurrent ? '<span class="tag-chip" style="background:#174235;color:var(--gold);font-weight:700">● LIVE NOW</span>' : ''}
+              </div>
+              <h3 class="journey-title">${esc(j.title)}</h3>
+              <div class="journey-sub">${esc(j.subtitle)}</div>
+              <p class="journey-desc">${esc(j.desc)}</p>
+              <div class="journey-tags">
+                ${j.tags.map(tag => `<span class="tag-chip">${esc(tag)}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="section-sh">
+        <span>INTO RIGHT NOW</span>
+      </div>
+      <div style="margin-bottom:20px">
+        ${a.int.map(i => `<span class="tag-chip">${esc(i)}</span>`).join('')}
+      </div>
+    `);
+  }
+};
+
+/* ==========================================================================
+   ROUTING & VIEW MANAGEMENT
+   ========================================================================== */
+const M = {
+  music: ['♫', 'Music House'],
+  builds: ['✱', 'The Lab'],
+  run: ['↗', 'Run Club'],
+  merch: ['▣', 'Merch Shop'],
+  services: ['✦', 'Services'],
+  about: ['☺', 'Me']
+};
+
+let reduced = matchMedia('(prefers-reduced-motion:reduce)').matches, busy = false, lastB = null, snd = false, AC = null;
+let currentRoute = 'world';
+
+const route = () => {
+  const h = location.hash.replace(/^#\/?/, '');
+  return M[h] ? h : 'world';
+};
+
+function go(r) {
+  if (route() === r) return;
+  const set = () => location.hash = r === 'world' ? '#/' : '#/' + r;
+  if (reduced) return set();
+  $('#wipe').classList.add('on');
+  setTimeout(() => {
+    set();
+    requestAnimationFrame(() => $('#wipe').classList.remove('on'));
+  }, 240);
+}
+
+// Reset character position upon returning to world (Guarantees visible character and correct position!)
+function exitBuilding(buildingId) {
+  entering = 0;
+  busy = false;
+  auto = null;
+  for (const k in keys) delete keys[k];
+  for (const k in pad) delete pad[k];
+  
+  const b = (buildingId && B.find(item => item.id === buildingId)) || lastB;
+  if (b) {
+    b.open = false;
+    p.x = b.x * T + b.dx + 6;
+    p.y = (b.y + b.h) * T + 14;
+    p.dir = 'down';
+    p.fr = 0;
+    p.t = 0;
+    lastB = b;
+  } else {
+    p.x = 256;
+    p.y = 130;
+    p.dir = 'down';
+    p.fr = 0;
+    p.t = 0;
+  }
+  cam.x = Math.max(0, Math.min(MW * T - VW, Math.round(p.x - VW / 2)));
+  cam.y = Math.max(0, Math.min(MH * T - VH, Math.round(p.y - VH / 2)));
+}
+
+function show() {
+  const prev = currentRoute;
+  const r = route();
+  currentRoute = r;
+  $('#wipe').classList.remove('on');
+
+  if (currentAudio) {
+    try { currentAudio.pause(); } catch (_) {}
+    if (currentPreviewBtn) currentPreviewBtn.textContent = '▶ 30s PREVIEW';
+    currentAudio = null;
+    currentPreviewBtn = null;
+  }
+
+  if (r === 'world') {
+    $('#world-section').style.display = 'flex';
+    $('#pages').classList.remove('active');
+    $('#pages').innerHTML = '';
+    $('#hdr-back').style.display = 'none';
+    document.title = 'Abhishek Vira — A Little World';
+    exitBuilding(prev !== 'world' ? prev : (lastB ? lastB.id : null));
+  } else {
+    const b = B.find(item => item.id === r);
+    if (b) lastB = b;
+    $('#world-section').style.display = 'none';
+    $('#pages').classList.add('active');
+    $('#pages').innerHTML = P[r] ? P[r]() : '';
+    $('#hdr-back').style.display = 'inline-flex';
+    document.title = (M[r] ? M[r][1] : 'Section') + ' · Abhishek Vira';
+    scrollTo(0, 0);
+  }
+}
+
+addEventListener('hashchange', show);
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#/"]');
+  if (a) {
+    e.preventDefault();
+    go(a.getAttribute('href').slice(2) || 'world');
+  }
+});
+
+// Sound Toggle
+$('#snd-toggle').onclick = () => {
+  snd = !snd;
+  if (snd && !AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+  $('#snd-toggle').innerHTML = snd ? '<span>🔊</span> SOUND: ON' : '<span>🔇</span> SOUND: OFF';
+  sfx('ok');
+};
+
+function sfx(k) {
+  if (!snd || !AC) return;
+  try {
+    if (AC.state === 'suspended') AC.resume();
+    const m = {
+      talk: [660, 0.03, 'square'],
+      step: [110, 0.03, 'triangle'],
+      door: [880, 0.15, 'square'],
+      ok: [990, 0.1, 'square']
+    }[k];
+    const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime;
+    o.type = m[2];
+    o.frequency.value = m[0];
+    g.gain.setValueAtTime(0.04, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + m[1]);
+    o.connect(g);
+    g.connect(AC.destination);
+    o.start();
+    o.stop(t + m[1]);
+  } catch (e) {}
+}
+
+let currentAudio = null;
+let currentPreviewBtn = null;
+window.playAudioTrack = function(previewUrl, pattern, btn) {
+  if (currentAudio) {
+    try { currentAudio.pause(); } catch (_) {}
+    const prevBtn = currentPreviewBtn;
+    const same = (currentAudio.src === previewUrl);
+    currentAudio = null;
+    currentPreviewBtn = null;
+    if (prevBtn) prevBtn.textContent = '▶ 30s PREVIEW';
+    if (same && btn === prevBtn) return;
+  }
+  if (previewUrl) {
+    try {
+      const audio = new Audio(previewUrl);
+      currentAudio = audio;
+      currentPreviewBtn = btn;
+      if (btn) btn.textContent = '⏸ PAUSE';
+      audio.play().catch(e => {
+        console.warn('Audio preview play blocked or offline, playing synth fallback:', e);
+        if (btn) btn.textContent = '▶ 30s PREVIEW';
+        currentAudio = null;
+        currentPreviewBtn = null;
+        playMelody(pattern);
+      });
+      audio.onended = () => {
+        if (btn) btn.textContent = '▶ 30s PREVIEW';
+        currentAudio = null;
+        currentPreviewBtn = null;
+      };
+    } catch (e) {
+      playMelody(pattern);
+    }
+  } else {
+    playMelody(pattern);
+  }
+};
+
+function playMelody(notes) {
+  if (!snd) {
+    snd = true;
+    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    $('#snd-toggle').innerHTML = '<span>🔊</span> SOUND: ON';
+  }
+  if (!notes || !notes.length || !AC) return;
+  if (AC.state === 'suspended') AC.resume();
+  notes.forEach((freq, i) => {
+    setTimeout(() => {
+      try {
+        const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime;
+        o.type = 'sawtooth';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(0.05, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+        o.connect(g);
+        g.connect(AC.destination);
+        o.start(t);
+        o.stop(t + 0.19);
+      } catch (e) {}
+    }, i * 140);
+  });
+}
+
+
+/* ==========================================================================
+   POKÉMON RUBY GBA TOWN ENGINE (All 6 Houses Beautifully Visible in Bezel)
+   ========================================================================== */
+const T = 16, MW = 32, MH = 24, VW = 240, VH = 160, cv = $('#cv'), ctx = cv.getContext('2d');
+cv.width = VW; cv.height = VH;
+
+const mk = (w, h) => {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  return [c, c.getContext('2d')];
+};
+
+const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+const sh = (h, a) => {
+  const n = parseInt(h.slice(1), 16), f = v => Math.max(0, Math.min(255, v));
+  return `rgb(${f((n >> 16) + a)},${f(((n >> 8) & 255) + a)},${f((n & 255) + a)})`;
+};
+const rnd = (x, y, k) => ((((x * 73856093) ^ (y * 19349663) ^ (k * 83492791)) >>> 0) % 1000) / 1000;
+const ell = (g, cx, cy, rx, ry, c) => {
+  g.fillStyle = c;
+  for (let y = -ry; y < ry; y++) {
+    const w = Math.round(rx * Math.sqrt(1 - ((y + 0.5) / ry) ** 2));
+    g.fillRect(cx - w, cy + y, w * 2, 1);
+  }
+};
+
+const IC = {
+  note: [63, 33, 33, 33, 33, 99, 231, 99],
+  flask: [60, 24, 24, 60, 126, 255, 255, 126],
+  shoe: [192, 224, 240, 248, 255, 255, 255, 0],
+  shirt: [231, 255, 255, 126, 60, 60, 60, 60],
+  star: [24, 24, 60, 255, 255, 60, 24, 24],
+  face: [126, 255, 153, 255, 255, 189, 195, 126]
+};
+const icon = (g, n, x, y) => IC[n].forEach((r, j) => {
+  for (let i = 0; i < 8; i++) {
+    if ((r >> (7 - i)) & 1) {
+      R(g, x + i + 1, y + j + 1, 1, 1, '#00000066');
+      R(g, x + i, y + j, 1, 1, '#fff');
+    }
+  }
+});
+
+/* Map Grid: Cross/Plus Layout for Clean Town Symmetry (Image 1 Style) */
+const tl = [...Array(MH)].map(() => Array(MW).fill(0));
+const fill = (t, a, b, c, d) => {
+  for (let y = b; y <= d; y++) for (let x = a; x <= c; x++) tl[y][x] = t;
+};
+
+// 1. East-West Main Avenues
+fill(1, 4, 7, 27, 8);   // North Main Avenue (connects Lab, Music, Run Club)
+fill(1, 4, 15, 27, 16); // South Main Avenue (connects Merch, Me, Services)
+
+// 2. North-South Boulevards
+fill(1, 15, 5, 16, 20); // Central Boulevard (leads from Music House down past Me to south park)
+fill(1, 5, 8, 6, 15);   // West Connector (connects Lab to Merch Shop)
+fill(1, 25, 8, 26, 15); // East Connector (connects Run Club to Services)
+
+// Water pond on south-west park (y: 18..21, x: 3..7)
+fill(2, 3, 18, 7, 21);
+[[3, 18], [7, 18], [3, 21], [7, 21]].forEach(([x, y]) => tl[y][x] = 0);
+
+// Forest border
+for (let y = 0; y < MH; y++) {
+  for (let x = 0; x < MW; x++) {
+    if (x === 0 || x === 31 || y === 0 || y === 23 ||
+        ((y === 1 || y === 22) && x % 2 === 0) ||
+        ((x === 1 || x === 30) && y % 2 === 0)) {
+      tl[y][x] = 3;
+    }
+  }
+}
+// Decorative Hoenn Route Trees
+[[10, 2], [11, 3], [20, 2], [21, 3], [1, 9], [2, 9], [29, 9], [30, 9],
+ [10, 18], [11, 19], [20, 18], [21, 19]].forEach(([x, y]) => {
+  if (y < MH && x < MW && !tl[y][x]) tl[y][x] = 3;
+});
+
+/* The 6 Buildings: All Beautifully Visible From Center Crossroads */
+const B = [
+  { id: 'music', n: 'MUSIC HOUSE', lb: 'MUSIC HOUSE', x: 13, y: 1, w: 6, h: 4, roof: '#d83838', wall: '#f0e0b0', ic: 'note' },
+  { id: 'builds', n: 'THE LAB', lb: 'THE LAB', x: 3, y: 3, w: 5, h: 4, roof: '#4878c8', wall: '#d8e0e8', ic: 'flask' },
+  { id: 'run', n: 'RUN CLUB', lb: 'RUN CLUB', x: 24, y: 3, w: 5, h: 4, roof: '#e07050', wall: '#f0e8c8', ic: 'shoe' },
+  { id: 'about', n: 'ME', lb: 'ME', x: 13, y: 11, w: 6, h: 4, roof: '#20a898', wall: '#e0f0e8', ic: 'face' },
+  { id: 'merch', n: 'MERCH SHOP', lb: 'MERCH SHOP', x: 3, y: 11, w: 5, h: 4, roof: '#a050c8', wall: '#f0d8e8', ic: 'shirt' },
+  { id: 'services', n: 'SERVICES', lb: 'SERVICES', x: 24, y: 11, w: 5, h: 4, roof: '#5098b8', wall: '#f8f0c0', ic: 'star' }
+];
+
+const OB = [
+  { id: 'npc', type: 'npc', verb: 'TALK', tx: 18, ty: 8 },
+  { id: 'sign', type: 'sign', verb: 'READ', tx: 12, ty: 8 },
+  { id: 'cave', type: 'cave', verb: '???', tx: 29, ty: 19 }
+];
+OB.forEach(o => { o.x = o.tx * T + 8; o.y = o.ty * T + 8; });
+
+const sol = tl.map(r => r.map(t => t > 1 ? 1 : 0));
+B.forEach(b => {
+  for (let y = b.y; y < b.y + b.h; y++) {
+    for (let x = b.x; x < b.x + b.w; x++) {
+      if (y < MH && x < MW) sol[y][x] = 1;
+    }
+  }
+});
+OB.forEach(o => { if (o.ty < MH && o.tx < MW) sol[o.ty][o.tx] = 1; });
+const trees = [];
+tl.forEach((r, y) => r.forEach((t, x) => { if (t === 3) trees.push({ x, y }); }));
+
+/* Sprites Generation */
+const [GC, gg] = mk(MW * T, MH * T);
+let TS, CS, SS;
+
+function buildSprites() {
+  for (let y = 0; y < MH; y++) {
+    for (let x = 0; x < MW; x++) {
+      const t = tl[y][x], px = x * T, py = y * T;
+      if (t === 1) {
+        // Sand paths (warm GBA sand)
+        R(gg, px, py, T, T, (x + y) & 1 ? '#e8d4a0' : '#e0cc98');
+        for (let k = 0; k < 3; k++) {
+          R(gg, px + (rnd(x, y, k) * 14 | 0), py + (rnd(x, y, k + 5) * 14 | 0), 2, 1, '#c8b078');
+        }
+        continue;
+      }
+      // Lush GBA grass / water
+      R(gg, px, py, T, T, t === 2 ? '#3888e8' : (x + y) & 1 ? '#68c050' : '#60b848');
+      if (t !== 2) {
+        for (let k = 0; k < 2; k++) {
+          if (rnd(x, y, k) < 0.5) {
+            R(gg, px + (rnd(x, y, k + 3) * 13 | 0), py + (rnd(x, y, k + 7) * 12 | 0), 1, 2, '#48a038');
+          }
+        }
+        // Wildflowers
+        if (t === 0 && rnd(x, y, 9) < 0.08) {
+          const c = ['#f04848', '#f8d830', '#fff'][rnd(x, y, 4) * 3 | 0];
+          R(gg, px + 7, py + 9, 1, 3, '#38802a');
+          R(gg, px + 6, py + 8, 3, 1, c);
+          R(gg, px + 7, py + 7, 1, 3, c);
+          R(gg, px + 7, py + 8, 1, 1, '#f8d830');
+        }
+      }
+    }
+  }
+
+  // Pokémon Ruby Style Buildings
+  B.forEach(b => {
+    const W = b.w * T, H = b.h * T, rh = b.h > 3 ? 24 : 16, [c, g] = mk(W, H);
+    R(g, 0, 0, W, H, '#202020');
+    R(g, 1, rh, W - 2, H - rh - 1, b.wall);
+    R(g, 1, 1, W - 2, rh - 1, b.roof);
+    R(g, 1, 1, W - 2, 2, sh(b.roof, 45)); // Roof highlight
+    for (let y = 5; y < rh - 2; y += 4) R(g, 1, y, W - 2, 1, sh(b.roof, -35)); // Roof tile ridges
+    R(g, 1, rh - 3, W - 2, 3, sh(b.roof, -70));
+    R(g, 1, H - 4, W - 2, 3, sh(b.wall, -50));
+    icon(g, b.ic, (W - 8) >> 1, ((rh - 8) >> 1) - 1);
+
+    // Building Title Signboard
+    g.font = '8px "Press Start 2P", monospace';
+    g.textBaseline = 'top';
+    const sw = Math.ceil(g.measureText(b.lb).width) + 6, sx = (W - sw) / 2 | 0, sy = rh + 3;
+    R(g, sx, sy, sw, 12, '#202020');
+    R(g, sx + 1, sy + 1, sw - 2, 10, '#f8f0d0');
+    g.fillStyle = '#202020';
+    g.fillText(b.lb, sx + 3, sy + 2);
+
+    // Front Door with Brass Knob
+    const dx = (b.w >> 1) * T + 2;
+    R(g, dx - 1, H - 17, 14, 17, '#202020');
+    R(g, dx, H - 16, 12, 16, '#7a4820');
+    R(g, dx + 5, H - 16, 2, 16, '#5a3010');
+    R(g, dx + 9, H - 8, 2, 2, '#f8c830');
+
+    // Windows with sky glass reflection
+    if (b.h > 3) {
+      [8, W - 18].forEach(wx => {
+        R(g, wx - 1, rh + 17, 12, 10, '#202020');
+        R(g, wx, rh + 18, 10, 8, '#a8d8f8');
+        R(g, wx + 4, rh + 18, 2, 8, '#202020');
+      });
+    }
+
+    b.s = c;
+    b.dx = dx;
+    b.dxp = b.x * T + dx;
+    b.dyp = (b.y + b.h) * T - 16;
+  });
+
+  // Hoenn Route Pine Tree
+  let g;
+  [TS, g] = mk(16, 24);
+  ell(g, 8, 10, 8, 9, '#103820');
+  ell(g, 8, 10, 7, 8, '#2c8030');
+  ell(g, 6, 7, 4, 4, '#4cac48');
+  ell(g, 10, 14, 4, 3, '#1f6a2a');
+  R(g, 6, 18, 4, 6, '#704820');
+  R(g, 6, 18, 1, 6, '#9a6030');
+
+  // Secret Shrine / Cave
+  [CS, g] = mk(16, 16);
+  ell(g, 8, 9, 8, 7, '#383430');
+  ell(g, 8, 9, 7, 6, '#787068');
+  R(g, 5, 8, 6, 8, '#101010');
+  [[1, 0], [2, 0], [3, 0], [3, 1], [2, 2], [2, 3], [2, 5]].forEach(([i, j]) => R(g, 5 + i, 8 + j, 1, 1, '#f8d030'));
+
+  // Signpost
+  [SS, g] = mk(16, 16);
+  R(g, 7, 8, 2, 8, '#704820');
+  R(g, 1, 1, 14, 9, '#202020');
+  R(g, 2, 2, 12, 7, '#d8b068');
+  R(g, 4, 4, 8, 1, '#704820');
+  R(g, 4, 6, 6, 1, '#704820');
+}
+
+// Character: Brendan / Ruby Style (Red shirt, yellow headband/cap, dark pants)
+function drawChar(g, ox, oy, dir, st, pal) {
+  const r = (x, y, w, h, c) => R(g, ox + x, oy + y, w, h, c);
+  const lL = st === 1 ? 1 : 0, rL = st === 2 ? 1 : 0, sd = dir === 'left' || dir === 'right';
+
+  r(3, 14, 10, 2, '#00000040'); // Foot shadow
+  r(5, 11, 3, 4 - lL, pal.pants);
+  r(8, 11, 3, 4 - rL, pal.pants);
+  r(5, 14 - lL, 3, 1, '#202020');
+  r(8, 14 - rL, 3, 1, '#202020');
+  r(4, 7, 8, 5, pal.shirt);
+  r(4, 11, 8, 1, sh(pal.shirt, -40));
+
+  if (sd) {
+    r(dir === 'left' ? 5 : 8, 8, 3, 4, sh(pal.shirt, -30));
+  } else {
+    r(3, 8, 1, 4, pal.skin);
+    r(12, 8, 1, 4, pal.skin);
+  }
+  r(4, 0, 8, 8, pal.skin);
+
+  if (dir === 'down') {
+    r(4, 0, 8, 3, pal.hair);
+    r(4, 2, 8, 2, pal.band);
+    r(5, 5, 1, 2, '#202020');
+    r(10, 5, 1, 2, '#202020');
+  } else if (dir === 'up') {
+    r(4, 0, 8, 7, pal.hair);
+    r(4, 3, 8, 1, pal.band);
+  } else {
+    r(4, 0, 8, 2, pal.hair);
+    r(4, 2, 8, 1, pal.band);
+    const L = dir === 'left';
+    r(L ? 8 : 4, 2, 4, 5, pal.hair);
+    r(L ? 5 : 10, 5, 1, 2, '#202020');
+  }
+}
+
+const PL = { skin: '#f8c8a0', hair: '#3a2418', band: '#f8d030', shirt: '#e8503a', pants: '#2a3a78' };
+const NP = { skin: '#f8c8a0', hair: '#d8d8d8', band: '#58c8d8', shirt: '#8a48c8', pants: '#383838' };
+
+/* Player State (Starts right at the central crossroads, facing down into town) */
+const p = { x: 256, y: 130, dir: 'down', t: 0, fr: 0 };
+const cam = { x: 0, y: 0 }, SPD = 76;
+let keys = {}, pad = {};
+let mouse = null, auto = null, nearB = null, nearI = null, nearT = null, entering = 0, lastFr = 0;
+
+const blocked = (x, y) => {
+  const x0 = Math.floor((x - 4) / T), x1 = Math.floor((x + 3.99) / T);
+  const y0 = Math.floor((y - 6) / T), y1 = Math.floor((y - 0.01) / T);
+  for (let j = y0; j <= y1; j++) {
+    for (let i = x0; i <= x1; i++) {
+      if (i < 0 || j < 0 || i >= MW || j >= MH || sol[j][i]) return true;
+    }
+  }
+  return false;
+};
+
+/* Dialogue System */
+const dlg = $('#dialog'), dtxt = $('#dtxt');
+let dq = [], di = 0, dc = 0, dt = null, ddone = true, dopen = false, dintro = false;
+
+function say(lines, intro) {
+  dq = lines; di = 0; dopen = true; dintro = !!intro;
+  dlg.style.display = 'block';
+  typeLine();
+}
+
+function typeLine() {
+  const s = dq[di]; ddone = false; dc = 0; dtxt.textContent = '';
+  $('#more').style.display = 'none'; $('#dsr').textContent = s;
+  clearInterval(dt);
+  if (reduced) {
+    dtxt.textContent = s; ddone = true; return fin();
+  }
+  dt = setInterval(() => {
+    dc++;
+    dtxt.textContent = s.slice(0, dc);
+    if (dc % 3 === 0) sfx('talk');
+    if (dc >= s.length) {
+      clearInterval(dt); ddone = true; fin();
+    }
+  }, 26);
+}
+
+const fin = () => $('#more').style.display = di < dq.length - 1 ? 'block' : 'none';
+
+function advance() {
+  if (!dopen) return;
+  if (!ddone) {
+    clearInterval(dt); dtxt.textContent = dq[di]; ddone = true; return fin();
+  }
+  if (++di < dq.length) typeLine(); else closeDlg();
+}
+
+function closeDlg() {
+  dopen = false; dlg.style.display = 'none'; clearInterval(dt);
+  if (dintro) { dintro = false; hint(); }
+}
+
+function hint() {
+  const h = $('#hint');
+  h.textContent = 'EXPLORE AROUND. WALK INTO A PLACE TO SEE WHAT I DO.';
+  h.style.display = 'block';
+  setTimeout(() => h.style.display = 'none', 6000);
+}
+
+dlg.onclick = advance;
+
+const cnt = {};
+function interact(o) {
+  const n = cnt[o.id] = (cnt[o.id] || 0) + 1, E = D.egg;
+  let l;
+  if (o.type === 'tree') l = n % 5 === 0 ? E.tree[1] : E.tree[Math.floor(Math.random() * E.tree.length)];
+  else if (o.type === 'npc') l = E.npc[(n - 1) % E.npc.length];
+  else if (o.type === 'sign') l = E.sign[(n - 1) % E.sign.length];
+  else l = E[o.type][(n - 1) % E[o.type].length];
+  sfx('ok');
+  say(o.type === 'cave' ? E.cave : [l]);
+}
+
+function near() {
+  nearB = null;
+  for (const b of B) {
+    const Dx = b.x * T + b.dx + 6, by = (b.y + b.h) * T;
+    if (Math.abs(p.x - Dx) <= 12 && p.y >= by + 6 && p.y <= by + 24) nearB = b;
+  }
+  nearI = null;
+  for (const o of OB) {
+    if (Math.hypot(p.x - o.x, p.y - 4 - o.y) < 22) nearI = o;
+  }
+  nearT = null;
+  for (const t of trees) {
+    if (Math.hypot(p.x - (t.x * T + 8), p.y - 4 - (t.y * T + 8)) < 20) {
+      nearT = { id: 'tree', type: 'tree' };
+      break;
+    }
+  }
+  const pr = $('#prompt');
+  const txt = nearB && !entering ? '▶ ENTER ' + nearB.n : nearI && !dopen ? '▶ ' + nearI.verb : '';
+  if (pr.textContent !== txt) pr.textContent = txt;
+  pr.style.display = txt ? 'block' : 'none';
+}
+
+function act() {
+  if (route() !== 'world' || busy) return;
+  if (dopen) return advance();
+  if (nearB) return enter(nearB);
+  if (nearI) return interact(nearI);
+  if (nearT) interact(nearT);
+}
+
+$('#prompt').onclick = act;
+
+function enter(b) {
+  if (busy) return;
+  busy = true;
+  b.open = true;
+  lastB = b;
+  auto = null;
+  p.x = b.x * T + b.dx + 6;
+  p.dir = 'up';
+  entering = reduced ? 0 : 0.24;
+  sfx('door');
+  setTimeout(() => go(b.id), reduced ? 0 : 260);
+}
+
+/* ==========================================================================
+   INPUTS: Keyboard, Touch D-Pad, Mouse Click & Tap-to-Move
+   ========================================================================== */
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (route() !== 'world') {
+      go('world');
+      return;
+    } else if (dopen) {
+      closeDlg();
+      return;
+    }
+  }
+  if (route() !== 'world' || e.ctrlKey || e.metaKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if ('arrowup arrowdown arrowleft arrowright w a s d'.split(' ').includes(k)) {
+    keys[k] = 1; e.preventDefault();
+  } else if ((k === 'enter' || k === ' ') && !e.target.closest('button,a,input,textarea')) {
+    e.preventDefault(); if (!e.repeat) act();
+  }
+});
+addEventListener('keyup', e => delete keys[e.key.toLowerCase()]);
+addEventListener('blur', () => { for (const k in keys) delete keys[k]; for (const k in pad) delete pad[k]; });
+
+// Mobile Touch D-Pad
+$$('#pad [data-d]').forEach(b => {
+  const d = b.dataset.d;
+  const on = e => {
+    e.preventDefault();
+    pad[d] = 1;
+    b.classList.add('on');
+    if (b.setPointerCapture && e.pointerId) {
+      try { b.setPointerCapture(e.pointerId); } catch (_) {}
+    }
+  };
+  const off = e => {
+    pad[d] = 0;
+    b.classList.remove('on');
+    if (b.hasPointerCapture && e.pointerId && b.hasPointerCapture(e.pointerId)) {
+      try { b.releasePointerCapture(e.pointerId); } catch (_) {}
+    }
+  };
+
+  b.addEventListener('pointerdown', on);
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(v => b.addEventListener(v, off));
+  b.addEventListener('touchstart', on, { passive: false });
+  ['touchend', 'touchcancel'].forEach(v => b.addEventListener(v, off, { passive: false }));
+  b.oncontextmenu = e => e.preventDefault();
+});
+
+const onAct = e => {
+  e.preventDefault();
+  $('#ab').classList.add('on');
+  act();
+  setTimeout(() => $('#ab').classList.remove('on'), 150);
+};
+$('#ab').addEventListener('pointerdown', onAct);
+$('#ab').addEventListener('touchstart', onAct, { passive: false });
+
+const onB = e => {
+  e.preventDefault();
+  $('#bb').classList.add('on');
+  const dock = document.querySelector('.nav-dock-grid');
+  if (dock) dock.scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => $('#bb').classList.remove('on'), 150);
+};
+$('#bb').addEventListener('pointerdown', onB);
+$('#bb').addEventListener('touchstart', onB, { passive: false });
+
+const wpos = e => {
+  const r = cv.getBoundingClientRect();
+  const fx = (e.clientX - r.left) / r.width;
+  const fy = (e.clientY - r.top) / r.height;
+  return { fx, fy, x: cam.x + fx * VW, y: cam.y + fy * VH };
+};
+
+cv.addEventListener('pointermove', e => {
+  if (e.pointerType === 'mouse') mouse = wpos(e);
+});
+cv.addEventListener('pointerleave', () => mouse = null);
+
+const handleTapOrClick = e => {
+  if (busy || dopen) return;
+  const w = wpos(e);
+  const b = B.find(b => w.x >= b.x * T && w.x < (b.x + b.w) * T && w.y >= b.y * T && w.y < (b.y + b.h) * T);
+  if (b) {
+    if (nearB === b) return enter(b);
+    auto = { x: b.x * T + b.dx + 6, y: (b.y + b.h) * T + 14, b, st: 0 };
+  } else {
+    auto = { x: w.x, y: w.y, st: 0 };
+  }
+};
+
+cv.addEventListener('click', handleTapOrClick);
+cv.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+    handleTapOrClick(e);
+  }
+});
+
+/* Step Loop */
+function step(dt) {
+  let kx = 0, ky = 0;
+  const K = n => keys[n] || pad[n[0]];
+  if (K('arrowleft') || keys.a || pad.l) kx--;
+  if (K('arrowright') || keys.d || pad.r) kx++;
+  if (K('arrowup') || keys.w || pad.u) ky--;
+  if (K('arrowdown') || keys.s || pad.d) ky++;
+
+  if ((kx || ky) && dopen && (ddone || dintro)) closeDlg();
+
+  let vx = 0, vy = 0;
+  if (busy || (dopen && !(kx || ky))) {}
+  else if (kx || ky) {
+    vx = kx; vy = ky; auto = null;
+  } else {
+    const t = auto || (mouse && { x: cam.x + mouse.fx * VW, y: cam.y + mouse.fy * VH });
+    if (t) {
+      const dx = t.x - p.x, dy = t.y - p.y, d = Math.hypot(dx, dy);
+      if (d > (auto ? 3 : 6)) {
+        vx = dx / d; vy = dy / d;
+      } else if (auto && !auto.b) {
+        auto = null;
+      }
+    }
+  }
+
+  if (vx && vy) {
+    const n = Math.SQRT1_2; vx *= n; vy *= n;
+  }
+
+  const bx = p.x, by = p.y, s = SPD * dt;
+  if (vx && !blocked(p.x + vx * s, p.y)) p.x += vx * s;
+  if (vy && !blocked(p.x, p.y + vy * s)) p.y += vy * s;
+
+  const mv = Math.hypot(p.x - bx, p.y - by);
+  if (mv > 0) {
+    p.dir = Math.abs(vx) > Math.abs(vy) ? (vx < 0 ? 'left' : 'right') : (vy < 0 ? 'up' : 'down');
+    p.t += dt;
+    const f = [0, 1, 0, 2][p.t / 0.13 & 3];
+    if (f && f !== lastFr) sfx('step');
+    lastFr = f;
+    p.fr = f;
+  } else {
+    p.fr = 0; p.t = 0;
+  }
+
+  if (auto) {
+    auto.st = (vx || vy) && mv < 0.15 * s ? auto.st + dt : 0;
+    if (auto.b && nearB === auto.b) enter(auto.b);
+    else if (auto.st > 0.6) {
+      if (auto.b) enter(auto.b); else auto = null;
+    }
+  }
+}
+
+function draw(t) {
+  // Clamped camera (Keeps all houses visible & properly centered)
+  cam.x = Math.max(0, Math.min(MW * T - VW, Math.round(p.x - VW / 2)));
+  cam.y = Math.max(0, Math.min(MH * T - VH, Math.round(p.y - VH / 2)));
+  const cx = cam.x, cy = cam.y;
+
+  // 1. Ground & Paths
+  ctx.drawImage(GC, -cx, -cy);
+  const f = reduced ? 0 : (t / 500 | 0) & 1;
+  for (let y = cy >> 4; y <= ((cy + VH) >> 4) && y < MH; y++) {
+    for (let x = cx >> 4; x <= ((cx + VW) >> 4) && x < MW; x++) {
+      if (tl[y][x] === 2) {
+        const px = x * T - cx, py = y * T - cy;
+        R(ctx, px + (f ? 2 : 8), py + 4, 4, 1, '#88c8f8');
+        R(ctx, px + (f ? 10 : 3), py + 11, 4, 1, '#88c8f8');
+      }
+    }
+  }
+
+  // 2. Y-sorted Renderables
+  const it = [];
+
+  // Trees
+  trees.forEach(tr => {
+    const y = (tr.y + 1) * T;
+    if (y > cy && y - T - 8 < cy + VH && tr.x * T > cx - T && tr.x * T < cx + VW) {
+      it.push({ y, f: () => ctx.drawImage(TS, tr.x * T - cx, tr.y * T - 8 - cy) });
+    }
+  });
+
+  // Buildings (With roof ridge highlights, signs & proximity glow)
+  B.forEach(b => it.push({
+    y: (b.y + b.h) * T,
+    f: () => {
+      const x = b.x * T - cx, y = b.y * T - cy;
+      ctx.drawImage(b.s, x, y);
+      if (b.open) {
+        R(ctx, b.dxp - cx, b.dyp - cy, 12, 16, '#1a0e08');
+        R(ctx, b.dxp - cx + 2, b.dyp - cy + 2, 8, 14, '#3a2410');
+      }
+      if (b === nearB && !b.open) {
+        const c = !reduced && ((t / 250 | 0) & 1) ? '#fff' : '#f8d030';
+        R(ctx, x - 2, y - 2, b.w * T + 4, 2, c);
+        R(ctx, x - 2, y + b.h * T, b.w * T + 4, 2, c);
+        R(ctx, x - 2, y, 2, b.h * T, c);
+        R(ctx, x + b.w * T, y, 2, b.h * T, c);
+      }
+    }
+  }));
+
+  // Objects & NPCs
+  OB.forEach(o => it.push({
+    y: (o.ty + 1) * T,
+    f: () => {
+      const x = o.tx * T - cx, y = o.ty * T - cy;
+      if (o.type === 'cave') ctx.drawImage(CS, x, y);
+      else if (o.type === 'sign') ctx.drawImage(SS, x, y);
+      else {
+        const dx = p.x - o.x, dy = p.y - o.y;
+        const d = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'left' : 'right') : (dy < 0 ? 'up' : 'down');
+        drawChar(ctx, x, y - 3, d, 0, NP);
+      }
+    }
+  }));
+
+  // Player Character — Rendered on every frame when outside doorways
+  it.push({
+    y: p.y,
+    f: () => {
+      if (entering <= 0.08) {
+        drawChar(ctx, Math.round(p.x - 8 - cx), Math.round(p.y - 15 - cy), p.dir, p.fr, PL);
+      }
+    }
+  });
+
+  it.sort((a, b) => a.y - b.y).forEach(i => i.f());
+}
+
+let last = 0;
+function loop(t) {
+  requestAnimationFrame(loop);
+  if (route() !== 'world' || document.hidden) {
+    last = 0; return;
+  }
+  const dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
+  last = t;
+  if (entering > 0) {
+    entering -= dt; p.y -= 50 * dt;
+  } else {
+    step(dt);
+  }
+  near();
+  draw(t);
+}
+
+/* Initialization */
+const start = () => {
+  buildSprites();
+  show();
+  requestAnimationFrame(loop);
+  if (route() === 'world') {
+    say(["HEY. I'M ABHISHEK. THIS IS MY LITTLE CORNER OF THE INTERNET. GO HAVE A LOOK AROUND."], true);
+    setTimeout(() => { if (dintro) closeDlg(); }, 10000);
+  }
+};
+
+let started = false;
+const go1 = () => { if (!started) { started = true; start(); } };
+document.fonts ? Promise.race([
+  document.fonts.load('8px "Press Start 2P"'),
+  new Promise(r => setTimeout(r, 1500))
+]).then(go1, go1) : go1();
+</script>
+</body>
+</html>
