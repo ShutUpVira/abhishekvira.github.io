@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Abhishek Vira — A Little World</title>
   <meta name="description" content="An interactive 8-bit personal world for Abhishek Vira — musician, builder, runner & strategist.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%2313382c'/><text x='3' y='12' font-family='monospace' font-size='10' font-weight='bold' fill='%23f5f2eb'>AV</text></svg>">
@@ -1128,48 +1131,114 @@
       gap: 5px;
     }
 
-    /* About Avatar & Hero Split */
-    .about-hero-grid {
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      gap: 22px;
-      margin-bottom: 28px;
+    /* Refined Me Section / Creator Dossier */
+    .about-profile-hero {
+      background: #fbfaf6;
+      border: 2.5px solid var(--frame-border);
+      border-radius: 6px;
+      padding: 30px 32px;
+      margin-bottom: 34px;
+      box-shadow: 0 6px 20px rgba(19, 56, 44, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 30px;
     }
-    @media (max-width: 720px) {
-      .about-hero-grid { grid-template-columns: 1fr; }
+    @media (max-width: 768px) {
+      .about-profile-hero {
+        flex-direction: column;
+        padding: 24px 18px;
+        text-align: center;
+        gap: 18px;
+      }
     }
-    .about-avatar-card {
-      background: #fff;
-      border: 2px solid #d5cec0;
-      border-radius: 4px;
-      padding: 14px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    }
-    .about-avatar-img-wrap {
-      width: 100%;
-      aspect-ratio: 1;
+    .about-avatar-frame {
+      width: 170px;
+      height: 170px;
+      min-width: 170px;
+      border-radius: 6px;
+      border: 2.5px solid #13382c;
       overflow: hidden;
-      border: 2px solid var(--frame-border);
-      border-radius: 3px;
-      margin-bottom: 10px;
       background: #0f2d23;
+      box-shadow: 3px 3px 0 var(--frame-border), 0 8px 16px rgba(0,0,0,0.12);
       position: relative;
+      flex-shrink: 0;
+    }
+    @media (max-width: 768px) {
+      .about-avatar-frame {
+        width: 150px;
+        height: 150px;
+        min-width: 150px;
+        margin: 0 auto;
+      }
     }
     .about-avatar-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center 25%;
       display: block;
     }
-    .about-main-bio-quote {
-      font: 700 clamp(16px, 2.5vw, 21px)/1.5 var(--sans);
+    .about-profile-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .about-profile-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 768px) {
+      .about-profile-meta {
+        justify-content: center;
+      }
+    }
+    .about-name-title {
+      font: 800 clamp(22px, 3.5vw, 28px)/1.15 var(--sans);
       color: var(--ink);
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+    .about-badge-role {
+      font: 700 11px var(--mono);
+      background: #174235;
+      color: var(--gold);
+      padding: 4px 10px;
+      border-radius: 2px;
+      letter-spacing: 0.5px;
+    }
+    .about-sub-origin {
+      font: 600 12px var(--mono);
+      color: #5a7364;
+      margin-top: -4px;
+    }
+    .about-quote-card {
       background: #edf4ef;
-      border-left: 4px solid #1b4537;
-      padding: 16px 20px;
+      border-left: 4px solid #174235;
       border-radius: 0 4px 4px 0;
-      margin-bottom: 18px;
+      padding: 16px 20px;
+      position: relative;
+      margin: 4px 0;
+    }
+    .about-quote-text {
+      font: 600 clamp(14px, 2vw, 16px)/1.65 var(--sans);
+      color: var(--ink);
+      margin: 0;
+      font-style: italic;
+    }
+    .about-quick-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    @media (max-width: 768px) {
+      .about-quick-links {
+        justify-content: center;
+      }
     }
 
     /* Tree Component for Services */
@@ -1448,11 +1517,10 @@ const D = {
     upcomingNoticeUrl: 'https://www.instagram.com/thevenomberriesband/',
     stream: {
       Spotify: 'https://open.spotify.com/artist/0XRsRVwlKw9vc5bKgJR2lA',
-      Apple: 'https://music.apple.com/us/artist/shut-up-vira/1895101414',
+      'Apple Music': 'https://music.apple.com/us/artist/shut-up-vira/1895101414',
       YouTube: 'https://www.youtube.com/@SHUTUPVIRA',
       Instagram: 'https://instagram.com/shutupvira',
-      VenomBerries: 'https://www.instagram.com/thevenomberriesband/',
-      SoundCloud: 'https://soundcloud.com'
+      VenomBerries: 'https://www.instagram.com/thevenomberriesband/'
     },
     releases: [
       {
@@ -1919,7 +1987,21 @@ const P = {
         </div>
         <div class="dashed-lead">${m.intro.map(t => `<p style="margin:0 0 10px">${t}</p>`).join('')}</div>
         <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:8px">
-          ${Object.entries(m.stream).map(([k, v]) => `<a class="light-btn" href="${v}" target="_blank" rel="noopener">${k} ↗</a>`).join('')}
+          <a class="dark-action-btn" style="padding:10px 16px;font-size:11.5px;display:inline-flex;align-items:center;gap:6px" href="${m.stream['Spotify']}" target="_blank" rel="noopener">
+            <span>🟢</span> SPOTIFY ARTIST ↗
+          </a>
+          <a class="dark-action-btn" style="padding:10px 16px;font-size:11.5px;background:#e11d48;border-color:#9f1239;display:inline-flex;align-items:center;gap:6px" href="${m.stream['Apple Music']}" target="_blank" rel="noopener">
+            <span>🍎</span> APPLE MUSIC ARTIST ↗
+          </a>
+          <a class="dark-action-btn" style="padding:10px 16px;font-size:11.5px;background:#dc2626;border-color:#991b1b;display:inline-flex;align-items:center;gap:6px" href="${m.stream['YouTube']}" target="_blank" rel="noopener">
+            <span>▶️</span> YOUTUBE CHANNEL ↗
+          </a>
+          <a class="light-btn" style="padding:10px 16px;font-size:11.5px;display:inline-flex;align-items:center;gap:6px" href="${m.stream['Instagram']}" target="_blank" rel="noopener">
+            <span>📸</span> @SHUTUPVIRA ↗
+          </a>
+          <a class="light-btn" style="padding:10px 16px;font-size:11.5px;display:inline-flex;align-items:center;gap:6px" href="${m.stream['VenomBerries']}" target="_blank" rel="noopener">
+            <span>🎸</span> VENOMBERRIES ↗
+          </a>
         </div>
       </div>
 
@@ -1948,9 +2030,11 @@ const P = {
             <h3 style="margin-bottom:2px">${esc(r.t)}</h3>
             ${r.artist ? `<div style="font:600 12px var(--mono);color:#4e705f;margin-bottom:8px">${esc(r.artist)}</div>` : ''}
             <p>${esc(r.d)}</p>
-            <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap">
-              <a class="dark-action-btn" style="padding:8px 12px;font-size:11px" href="${r.u}" target="_blank" rel="noopener">LISTEN ON SPOTIFY ↗</a>
-              <button class="light-btn" onclick="playAudioTrack('${esc(r.preview || '')}', ${JSON.stringify(r.pattern || [])}, this)">▶ 30s PREVIEW</button>
+            <div style="margin-top:auto;display:flex;gap:6px;flex-wrap:wrap">
+              <a class="dark-action-btn" style="padding:8px 12px;font-size:11px" href="${r.u}" target="_blank" rel="noopener">SPOTIFY ↗</a>
+              <a class="light-btn" style="padding:8px 12px;font-size:11px" href="${m.stream['Apple Music']}" target="_blank" rel="noopener">APPLE MUSIC ↗</a>
+              <a class="light-btn" style="padding:8px 12px;font-size:11px" href="${m.stream['YouTube']}" target="_blank" rel="noopener">YOUTUBE ↗</a>
+              <button class="light-btn" style="padding:8px 12px;font-size:11px" onclick="playAudioTrack('${esc(r.preview || '')}', ${JSON.stringify(r.pattern || [])}, this)">▶ 30s PREVIEW</button>
             </div>
           </div>
         `).join('')}
@@ -2295,30 +2379,32 @@ const P = {
   about: () => {
     const a = D.about;
     return renderInsideFrame('VIRA ISLAND / THE HUMAN', 'About Me', a.hero, `
-      <div class="about-hero-grid">
-        <div class="about-avatar-card">
-          <div class="about-avatar-img-wrap">
-            ${renderImg(a.avatarImage, 'Abhishek Vira', 'about-avatar-img', 'ABHISHEK VIRA')}
+      <div class="about-profile-hero">
+        <div class="about-avatar-frame">
+          ${renderImg(a.avatarImage, 'Abhishek Vira', 'about-avatar-img', 'ABHISHEK VIRA')}
+        </div>
+        <div class="about-profile-body">
+          <div class="about-profile-meta">
+            <h3 class="about-name-title">Abhishek Vira</h3>
+            <span class="about-badge-role">SOUND, CODE & ENDURANCE</span>
           </div>
-          <div style="font:700 15px var(--sans);color:var(--ink);margin-bottom:4px">Abhishek Vira</div>
-          <div style="font:10px var(--mono);color:#6a7e72;margin-bottom:12px">BOMBAY / NYC ✦ SOUND & TECH</div>
-          <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap">
+          <div class="about-sub-origin">BOMBAY / NYC ✦ FOUNDER & MULTI-HYPHENATE</div>
+          <div class="about-quote-card">
+            <p class="about-quote-text">"${esc(a.mainBio)}"</p>
+          </div>
+          <div class="about-quick-links">
             <a class="light-btn" href="#/music">♫ MUSIC</a>
             <a class="light-btn" href="#/run">↗ RUN CLUB</a>
             <a class="light-btn" href="#/builds">✱ THE LAB</a>
-          </div>
-        </div>
-
-        <div>
-          <!-- Main Raw Bio Quote -->
-          <div class="about-main-bio-quote" style="margin-bottom:0">
-            "${esc(a.mainBio)}"
+            <a class="light-btn" href="#/merch">▣ MERCH</a>
+            <a class="light-btn" href="#/services">✦ SERVICES</a>
+            <a class="dark-action-btn" href="mailto:${D.email}">✉ EMAIL DIRECTLY</a>
           </div>
         </div>
       </div>
 
       <!-- Rewritten Journey Map -->
-      <div class="section-sh">
+      <div class="section-sh" style="margin-top:36px;margin-bottom:20px">
         <span>JOURNEY MAP: FROM PHYSICS TO THE MULTIVERSE</span>
       </div>
       <div class="journey-map">
