@@ -1172,20 +1172,80 @@
       margin-bottom: 18px;
     }
 
-    /* Input Elements inside Services */
-    .form-input {
-      width: 100%;
-      background: #fff;
-      border: 2px solid #ccd8cf;
-      border-radius: 3px;
-      padding: 12px 14px;
-      font: 14px var(--sans);
-      margin-bottom: 12px;
-      color: var(--ink);
+    /* Tree Component for Services */
+    .services-tree {
+      margin: 16px 0 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
-    .form-input:focus {
-      outline: none;
-      border-color: var(--ink);
+    .tree-category-node {
+      background: #faf8f2;
+      border: 2px solid var(--frame-bg);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(19, 56, 44, 0.06);
+    }
+    .tree-cat-summary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 18px;
+      background: #f0ebe0;
+      border-bottom: 1.5px solid #dcd5c5;
+      font: 700 15px var(--sans);
+      color: var(--ink);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      transition: background 0.15s;
+    }
+    .tree-cat-summary::-webkit-details-marker { display: none; }
+    .tree-cat-summary:hover { background: #e8e2d4; }
+    .tree-branch-symbol { font-size: 16px; }
+    .tree-cat-title { letter-spacing: 0.5px; }
+    .tree-cat-sub { font: 500 13px var(--sans); color: #5a7364; }
+    .tree-branches-list {
+      padding: 12px 18px 16px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tree-leaf-node {
+      border-left: 2px dashed #b5c7bc;
+      padding-left: 14px;
+      margin-left: 8px;
+    }
+    .tree-leaf-summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      padding: 6px 0;
+    }
+    .tree-leaf-summary::-webkit-details-marker { display: none; }
+    .tree-branch-line {
+      font: 13px var(--mono);
+      color: #174235;
+      font-weight: 700;
+    }
+    .tree-leaf-title {
+      font: 700 14px var(--sans);
+      color: var(--ink);
+      transition: color 0.15s;
+    }
+    .tree-leaf-summary:hover .tree-leaf-title {
+      color: #0e6e5e;
+    }
+    .tree-leaf-content {
+      padding: 6px 0 10px 28px;
+    }
+    .tree-leaf-content p {
+      margin: 0;
+      font: 400 13.5px/1.65 var(--sans);
+      color: #334155;
     }
 
     /* Screen Wipe Transition */
@@ -1361,12 +1421,12 @@
    - If an image link is left blank or fails to load, a stylish retro pixel pattern will display automatically.
    ========================================================================== */
 const D = {
-  email: 'abhishek@example.com',
+  email: 'abhishek.vira@gmail.com',
   social: {
     Spotify: 'https://open.spotify.com/artist/0XRsRVwlKw9vc5bKgJR2lA',
     Instagram: 'https://instagram.com/shutupvira',
-    Apple: 'https://music.apple.com',
-    YouTube: 'https://youtube.com',
+    Apple: 'https://music.apple.com/us/artist/shut-up-vira/1895101414',
+    YouTube: 'https://www.youtube.com/@SHUTUPVIRA',
     Strava: 'https://strava.com',
     GitHub: 'https://github.com'
   },
@@ -1388,10 +1448,10 @@ const D = {
     upcomingNoticeUrl: 'https://www.instagram.com/thevenomberriesband/',
     stream: {
       Spotify: 'https://open.spotify.com/artist/0XRsRVwlKw9vc5bKgJR2lA',
+      Apple: 'https://music.apple.com/us/artist/shut-up-vira/1895101414',
+      YouTube: 'https://www.youtube.com/@SHUTUPVIRA',
       Instagram: 'https://instagram.com/shutupvira',
       VenomBerries: 'https://www.instagram.com/thevenomberriesband/',
-      Apple: 'https://music.apple.com',
-      YouTube: 'https://youtube.com',
       SoundCloud: 'https://soundcloud.com'
     },
     releases: [
@@ -1487,8 +1547,9 @@ const D = {
         date: 'BUILD 2026',
         filename: 'ReadStreak.apk',
         apkUrl: 'APKs/ReadStreak.apk',
-        desc: 'Daily reading habit companion and consistency tracker. Log daily pages, time active reading sessions, monitor reading streaks, and build unstoppable reading momentum.',
-        features: ['Reading Streak Tracking', 'Session Timer & Metrics', 'Book Progress Counter', 'Offline First'],
+        image: 'Assets/Lab/readstreak.svg',
+        desc: "ReadStreak is an app that helps you read EPUBs. It also uses Google's text-to-speech engine to read your book aloud to you as an audiobook.",
+        features: ['EPUB Reader', 'Google Text-to-Speech', 'Audiobook Mode', 'Offline First'],
         icon: '📚'
       },
       {
@@ -1498,8 +1559,9 @@ const D = {
         date: 'BUILD 2026',
         filename: 'StringTuner.apk',
         apkUrl: 'APKs/StringTuner.apk',
-        desc: 'Ultra-low-latency chromatic instrument tuner engineered for guitar, bass, and string players. Features high-precision real-time pitch detection and frequency analysis.',
-        features: ['Chromatic Pitch Detection', 'Ultra-Low Latency', 'Multi-Instrument Profiles', 'Stage Dark UI'],
+        image: 'Assets/Lab/stringtuner.svg',
+        desc: 'StringTuner has zero latency and absolutely no ads. I was irritated by the barrage of intrusive ads on GuitarTuna, so I built my own clean, instant alternative.',
+        features: ['Zero Latency', 'No Ads Ever', 'Chromatic Tuner', 'Stage Dark UI'],
         icon: '🎸'
       }
     ],
@@ -1517,25 +1579,12 @@ const D = {
     },
     confidential: [
       {
-        name: 'Algorithmic Execution & Order Routing Engine',
-        tag: 'CONFIDENTIAL / PRIVATE CODEBASE',
-        badge: 'NDA PROTECTED',
-        desc: 'Proprietary low-latency trading infrastructure, real-time risk checks, and execution routing pipelines. Codebase and quantitative models are strictly proprietary under client non-disclosure agreements.',
-        tech: ['Low Latency', 'Private Infrastructure', 'Proprietary Algorithms', 'NDA Protected']
-      },
-      {
-        name: 'Enterprise SaaS User Journey & Product Engine',
+        name: 'PropINTEL',
+        client: 'Prithvi Estates',
         tag: 'CONFIDENTIAL / CLIENT IP',
         badge: 'NDA PROTECTED',
-        desc: 'Custom 0-to-1 core user workflows, distributed client architecture, and enterprise analytics pipelines engineered for select private venture clients. Source code restricted under mutual NDA.',
-        tech: ['Enterprise Scale', 'Full-Stack Architecture', 'Private Codebase', 'NDA Protected']
-      },
-      {
-        name: 'Stealth Audio DSP & Synthesizer Kernel',
-        tag: 'CONFIDENTIAL / PROPRIETARY R&D',
-        badge: 'PRIVATE IP',
-        desc: 'Custom digital signal processing algorithms, wavetable interpolation engines, and hardware control protocols developed for forthcoming private audio hardware/software ventures.',
-        tech: ['Audio DSP', 'Real-Time Kernel', 'Proprietary IP', 'Private Codebase']
+        desc: 'Proprietary intelligence, real estate valuation workflows, and asset analytics platform engineered for Prithvi Estates. Private enterprise codebase under strict mutual NDA.',
+        tech: ['Prithvi Estates', 'Real Estate Intelligence', 'Valuation Engine', 'Private Codebase']
       }
     ]
   },
@@ -1649,74 +1698,65 @@ const D = {
 
   services: {
     hero: 'Bespoke technology builds, live music performance & viral marketing.',
-    lead: 'A rare hybrid intersection: engineering production software, commanding live music stages, and crafting viral organic media campaigns with millions of views. Available for select software contracts, live events, music instruction, and growth engagements.',
-    sections: [
+    lead: 'A rare hybrid intersection: engineering production software, commanding live music stages, and crafting viral organic media campaigns with millions of views.',
+    tree: [
       {
         id: 'tech',
-        category: 'IN TECH',
-        tagline: 'Code, Architecture & Product Engineering',
+        label: 'TECH',
         icon: '💻',
-        items: [
+        subtitle: 'Websites, SaaS & Product Consulting',
+        branches: [
           {
-            title: 'Build Beautiful Websites',
-            desc: 'Bespoke, high-aesthetic web experiences, interactive 2D/3D canvas sites, portfolio platforms, and high-converting landing pages built with clean code and uncompromising visual taste.',
-            chips: ['Interactive Canvas & WebGL', 'Responsive & Mobile-First', 'Performance & SEO', 'Bespoke Visual Design']
+            title: 'Beautiful Websites',
+            desc: 'Bespoke, responsive websites and interactive web applications engineered to captivate and convert. Built with clean code, fast loading speeds, and high visual taste.'
           },
           {
-            title: 'Build Software & SaaS Products',
-            desc: 'End-to-end full-stack software and SaaS engineering. From database architecture and custom APIs to responsive web apps, native Android tools, and production-ready systems.',
-            chips: ['Full-Stack Web Apps', 'SaaS MVPs & Architectures', 'Custom APIs & Backends', 'Native Android Utilities']
+            title: 'Software & SaaS Products',
+            desc: 'Full-stack software engineering from architecture to production deployment. Robust backends, clean APIs, and responsive client apps built to scale effortlessly.'
           },
           {
-            title: 'Consult With Regards to Your Product',
-            desc: '0-to-1 strategic product consulting, roadmap design, and user experience teardowns. Helping founders find product-market fit, streamline feature scope, and build high-velocity engineering workflows.',
-            chips: ['0-to-1 Product Roadmaps', 'UX Architecture Teardowns', 'Technical Feasibility & Stack', 'Founder Advisory & Strategy']
+            title: 'Product Consulting',
+            desc: '0-to-1 strategic product advisory and technical roadmapping. Helping founders sharpen feature scope, eliminate friction, and execute with high velocity.'
           }
         ]
       },
       {
         id: 'music',
-        category: 'IN MUSIC',
-        tagline: 'Live Performance, Coaching & Audio Production',
+        label: 'MUSIC',
         icon: '🎸',
-        items: [
+        subtitle: 'Live Shows, Coaching & Production',
+        branches: [
           {
-            title: 'Perform For Your Events',
-            desc: 'Electrifying live performances tailored for clubs, private venues, weddings, corporate events, and festivals. All sorts of music genres sorted: Western, Bollywood, Jazz, Classic Rock, Metal, Pop-Punk, and Indie.',
-            chips: ['Full Band Shows (VenomBerries / LeadFeather)', 'Solo Acoustic / Electronic Sets', 'Versatile Multi-Genre Setlists', 'Private Events & Festivals']
+            title: 'Live Event Performances',
+            desc: 'High-energy live sets for festivals, clubs, private venues, and weddings. All styles sorted across Western, Bollywood, Jazz, Classic Rock, Metal, and Pop-Punk.'
           },
           {
-            title: 'Teach You How to Play & Sing',
-            desc: 'Hands-on, stage-tested music education. Personalized coaching to teach you how to play Guitar, Bass, Keys, and Drums, and master modern singing technique with control, pitch, and stage confidence.',
-            chips: ['Guitar (Electric / Acoustic)', 'Bass Guitar (Groove, Slap & Pocket)', 'Keys & Synthesizers', 'Drums & Vocal Technique']
+            title: 'Instrument & Vocal Coaching',
+            desc: 'Hands-on, stage-tested coaching across Guitar, Bass, Keys, and Drums. Learn practical fretboard mastery, groove, and contemporary vocal technique with confidence.'
           },
           {
             title: 'Music Production & Songwriting',
-            desc: 'Professional songwriting, musical composition, synthesizer tracking, and audio production. Crafting infectious melodies, punchy basslines, and polished final arrangements for artists and commercial media.',
-            chips: ['Original Songwriting & Hooks', 'Synth & Analog Sound Design', 'Arrangement & Tracking', 'Commercial & Sync Jingles']
+            desc: 'Custom songwriting, arrangement, synthesizer tracking, and audio production. Crafting punchy hooks, dynamic basslines, and release-ready masters.'
           }
         ]
       },
       {
-        id: 'marketing',
-        category: 'IN MARKETING',
-        tagline: 'Viral Short-Form Video & Social Media Growth',
+        id: 'content',
+        label: 'CONTENT',
         icon: '📱',
-        items: [
+        subtitle: 'Organic Growth & Viral Short-Form',
+        branches: [
           {
-            title: 'Social Media Strategy & Audience Growth',
-            desc: 'Strategic social media consulting built on actual cultural resonance rather than useless corporate buzzwords. Turn casual scrollers into loyal communities and active customers.',
-            chips: ['Community Building', 'Algorithmic Distribution Strategy', 'Brand Tone & Narrative', 'Platform Growth Playbooks']
+            title: 'Social Media Strategy',
+            desc: 'Organic distribution playbooks designed for cultural resonance instead of vanity metrics. Turning casual viewers into an engaged, loyal audience.'
           },
           {
-            title: 'Viral Short-Form Content (Millions in Views)',
-            desc: 'Hailing with multiple original videos hitting over millions of views individually. Proven frameworks for first-second visual hooks, retention curves, pacing, and viral audience psychology.',
-            chips: ['Multi-Million View Hooks', 'High-Retention Video Editing', 'Relatable Storytelling', 'Trend Capitalization']
+            title: 'Viral Short-Form Videos',
+            desc: 'Multiple original videos hitting millions of views individually. Frameworks built on retention-first visual hooks, rapid pacing, and psychological triggers.'
           },
           {
             title: 'End-to-End Content Resolution',
-            desc: 'All sorts of short-form content headaches taken care of. From raw concept ideation and filming guidelines to final edit cuts, sound design hooks, captions, and publishing strategy.',
-            chips: ['Concept to Final Export', 'Audio & Sound Hook Selection', 'Creative Direction & Filming Prep', 'Analytics & Iteration']
+            desc: 'Complete short-form production taken care of from concept to final export. Scripting guidelines, audio curation, and seamless editing resolution.'
           }
         ]
       }
@@ -1724,14 +1764,9 @@ const D = {
   },
 
   about: {
-    hero: 'Maker, musician, runner & curious human.',
+    hero: '',
     avatarImage: 'Assets/Music/Main.jpg',
-    mainBio: 'I make music, code, run, surf, climb, do coke, your mom and your dad(only on Wednesdays)',
-    extendedBio: [
-      "Welcome to my little corner of the internet. I'm a multi-hyphenate creator living at the wild intersection of live sound, software architecture, streetwear, and relentless movement.",
-      "I believe the modern web lost its soul when everything became sterile corporate SaaS templates. This site is my playground: an authentic, unfiltered, 8-bit space where every door opens into one of my real-world obsessions.",
-      "Whether I'm melting faces on stage with a synthesizer as Shut Up Vira, shipping production code for clients, or pacing friends at dawn with Not A Run Club, I play the game full out."
-    ],
+    mainBio: 'I make and play music, code, run, surf, climb, sell apparel, philosophize, psychoanalyze, and chase curiosities like my life depends on it',
     journey: [
       {
         year: '2018',
@@ -1776,14 +1811,6 @@ const D = {
         tags: ['Shut Up Vira', 'VenomBerries', 'LeadFeather', 'Not A Run Club', 'Freelance Studio', 'Teaching'],
         isCurrent: true
       }
-    ],
-    int: [
-      'Analog poly-synths & tape loops',
-      'Not A Run Club sunrise 10Ks',
-      'Frankly Wearing streetwear typography',
-      'Cold-water ocean surfing & climbing',
-      'Raw canvas & chiptune audio programming',
-      'Specialty single-origin Ethiopian coffee'
     ]
   },
 
@@ -1829,7 +1856,7 @@ const renderInsideFrame = (breadcrumb, title, subtitle, contentHtml) => `
     ${STAR_WATERMARK}
     <span class="breadcrumb-tag">${breadcrumb}</span>
     <h2 class="page-hero-title">${title}</h2>
-    <p class="page-hero-subtitle">${subtitle}</p>
+    ${subtitle ? `<p class="page-hero-subtitle">${subtitle}</p>` : ''}
     ${contentHtml}
     <div style="margin-top:40px;padding-top:20px;border-top:1.5px solid #dcd5c7">
       <a class="dark-action-btn" href="#/">← BACK TO THE WORLD</a>
@@ -2016,10 +2043,17 @@ const P = {
               <span class="apk-badge-android">🤖 ANDROID APK</span>
               <span class="apk-version-pill">${esc(apk.version)}</span>
             </div>
-            <h3 class="apk-title">${apk.icon} ${esc(apk.name)}</h3>
-            <div class="apk-meta-row">
-              <span>💾 ${esc(apk.size)}</span>
-              <span>✦ ${esc(apk.date)}</span>
+            <div style="display:flex;align-items:center;gap:14px;margin:12px 0 10px">
+              <div style="width:58px;height:58px;border-radius:14px;overflow:hidden;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.12);border:1.5px solid #d5cec0;background:#0d261d">
+                <img src="${esc(apk.image)}" alt="${esc(apk.name)} Icon" style="width:100%;height:100%;object-fit:cover;display:block" />
+              </div>
+              <div>
+                <h3 class="apk-title" style="margin:0">${esc(apk.name)}</h3>
+                <div class="apk-meta-row" style="margin-top:4px;margin-bottom:0">
+                  <span>💾 ${esc(apk.size)}</span>
+                  <span>✦ ${esc(apk.date)}</span>
+                </div>
+              </div>
             </div>
             <p class="apk-desc">${esc(apk.desc)}</p>
             <div style="margin-bottom:16px">
@@ -2206,64 +2240,54 @@ const P = {
 
   services: () => {
     const s = D.services;
-    return renderInsideFrame('VIRA ISLAND / STRATEGY, MUSIC & CODE', 'Services', s.hero, `
+    return renderInsideFrame('VIRA ISLAND / TECH, MUSIC & CONTENT', 'Services', s.hero, `
       <div class="dashed-sub-box">
         <span class="dashed-label">WHAT I DO</span>
-        <p class="dashed-lead">${s.lead}</p>
-        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-          <a class="light-btn" href="#tech-services">💻 IN TECH</a>
-          <a class="light-btn" href="#music-services">🎸 IN MUSIC</a>
-          <a class="light-btn" href="#marketing-services">📱 IN MARKETING</a>
-        </div>
+        <p class="dashed-lead">${esc(s.lead)}</p>
       </div>
-
-      ${s.sections.map(sec => `
-        <div class="section-sh" id="${sec.id}-services" style="margin-top:28px">
-          <span>${sec.icon} ${sec.category} — ${esc(sec.tagline)}</span>
-        </div>
-        <div class="content-grid" style="margin-bottom:20px">
-          ${sec.items.map(item => `
-            <div class="content-card">
-              <span class="content-meta">${sec.category}</span>
-              <h3 style="margin-bottom:8px">${esc(item.title)}</h3>
-              <p>${esc(item.desc)}</p>
-              <div style="margin-top:auto;padding-top:12px;display:flex;flex-wrap:wrap;gap:6px">
-                ${item.chips.map(c => `<span class="tag-chip">${esc(c)}</span>`).join('')}
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      `).join('')}
 
       <div class="section-sh">
-        <span>NEED HELP WITH SOMETHING? LET'S TALK</span>
+        <span>SERVICES TREE (EXPANDABLE DIRECTORY)</span>
       </div>
-      <div class="dashed-sub-box">
-        <form onsubmit="event.preventDefault(); alert('Message dispatched! Abhishek will get back to you shortly.'); this.reset();">
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:12px;margin-bottom:12px">
-            <input type="text" class="form-input" placeholder="YOUR NAME" required style="margin-bottom:0">
-            <input type="email" class="form-input" placeholder="YOUR EMAIL" required style="margin-bottom:0">
-          </div>
-          <div style="margin-bottom:14px">
-            <label style="font:700 11px var(--mono);color:var(--muted);display:block;margin-bottom:6px">PRIMARY INQUIRY DOMAIN</label>
-            <div style="display:flex;gap:12px;flex-wrap:wrap">
-              <label style="font:600 12px var(--sans);cursor:pointer;display:inline-flex;align-items:center;gap:5px">
-                <input type="radio" name="domain" value="tech" checked> 💻 Tech & SaaS
-              </label>
-              <label style="font:600 12px var(--sans);cursor:pointer;display:inline-flex;align-items:center;gap:5px">
-                <input type="radio" name="domain" value="music"> 🎸 Live Music & Coaching
-              </label>
-              <label style="font:600 12px var(--sans);cursor:pointer;display:inline-flex;align-items:center;gap:5px">
-                <input type="radio" name="domain" value="marketing"> 📱 Social Media & Short-Form
-              </label>
+      <div class="services-tree">
+        ${s.tree.map(cat => `
+          <details class="tree-category-node" open>
+            <summary class="tree-cat-summary">
+              <span class="tree-branch-symbol">📁</span>
+              <span>${cat.icon}</span>
+              <span class="tree-cat-title">${esc(cat.label)}</span>
+              <span class="tree-cat-sub">— ${esc(cat.subtitle)}</span>
+            </summary>
+            <div class="tree-branches-list">
+              ${cat.branches.map((b, idx) => `
+                <details class="tree-leaf-node" open>
+                  <summary class="tree-leaf-summary">
+                    <span class="tree-branch-line">${idx === cat.branches.length - 1 ? '└──' : '├──'}</span>
+                    <span class="tree-leaf-title">${esc(b.title)}</span>
+                  </summary>
+                  <div class="tree-leaf-content">
+                    <p>${esc(b.desc)}</p>
+                  </div>
+                </details>
+              `).join('')}
             </div>
-          </div>
-          <textarea class="form-input" rows="3" placeholder="WHAT ARE WE BUILDING, LAUNCHING OR SCHEMING TOGETHER?" required></textarea>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-            <button type="submit" class="dark-action-btn">SEND MESSAGE ✦</button>
-            <a class="light-btn" href="mailto:${D.email}">EMAIL DIRECTLY (${D.email})</a>
-          </div>
-        </form>
+          </details>
+        `).join('')}
+      </div>
+
+      <div class="section-sh">
+        <span>START A PROJECT OR INQUIRE</span>
+      </div>
+      <div class="dashed-sub-box" style="text-align:center;padding:32px 20px">
+        <div style="font:700 20px var(--sans);color:var(--ink);margin-bottom:8px">Ready to work together?</div>
+        <p style="font-size:14px;color:#3b5045;max-width:540px;margin:0 auto 20px;line-height:1.6">
+          Whether you need high-impact software, live music booking, or organic short-form video strategy, reach out directly.
+        </p>
+        <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+          <a class="dark-action-btn" href="mailto:${D.email}" style="font-size:13px;padding:12px 24px">
+            ✉ EMAIL DIRECTLY: ${D.email}
+          </a>
+        </div>
       </div>
     `);
   },
@@ -2287,13 +2311,8 @@ const P = {
 
         <div>
           <!-- Main Raw Bio Quote -->
-          <div class="about-main-bio-quote">
+          <div class="about-main-bio-quote" style="margin-bottom:0">
             "${esc(a.mainBio)}"
-          </div>
-
-          <div class="dashed-sub-box" style="margin-bottom:0">
-            <span class="dashed-label">THE EXTENDED PERSPECTIVE</span>
-            <div class="dashed-lead">${a.extendedBio.map(t => `<p style="margin:0 0 10px">${esc(t)}</p>`).join('')}</div>
           </div>
         </div>
       </div>
@@ -2320,13 +2339,6 @@ const P = {
             </div>
           </div>
         `).join('')}
-      </div>
-
-      <div class="section-sh">
-        <span>INTO RIGHT NOW</span>
-      </div>
-      <div style="margin-bottom:20px">
-        ${a.int.map(i => `<span class="tag-chip">${esc(i)}</span>`).join('')}
       </div>
     `);
   }

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108">
+  <defs>
+    <linearGradient id="rsBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#164e3f"/>
+      <stop offset="50%" stop-color="#0e382d"/>
+      <stop offset="100%" stop-color="#08201a"/>
+    </linearGradient>
+    <linearGradient id="pageGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fefae0"/>
+      <stop offset="100%" stop-color="#e2d9b6"/>
+    </linearGradient>
+    <linearGradient id="pageGradR" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f9f6df"/>
+      <stop offset="100%" stop-color="#d5cca4"/>
+    </linearGradient>
+    <filter id="rsDrop" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <!-- Squircle Base -->
+  <rect x="4" y="4" width="100" height="100" rx="22" fill="url(#rsBg)" stroke="#25634d" stroke-width="1.5"/>
+  <!-- Soundwaves for Google TTS Audiobook -->
+  <path d="M42 22 Q54 18 66 22" fill="none" stroke="#f8c830" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+  <path d="M46 16 Q54 13 62 16" fill="none" stroke="#f8c830" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+  <!-- Book Spine / Pages (Vector paths from ReadStreak APK) -->
+  <g filter="url(#rsDrop)">
+    <!-- Left Page -->
+    <path d="M30 34 L54 40 L54 80 L30 74 Z" fill="url(#pageGradL)"/>
+    <!-- Right Page -->
+    <path d="M78 34 L54 40 L54 80 L78 74 Z" fill="url(#pageGradR)"/>
+    <!-- Text Lines left -->
+    <line x1="35" y1="46" x2="49" y2="49.5" stroke="#8a7f66" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <line x1="35" y1="55" x2="49" y2="58.5" stroke="#8a7f66" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <line x1="35" y1="64" x2="49" y2="67.5" stroke="#8a7f66" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <!-- Text Lines right -->
+    <line x1="59" y1="49.5" x2="73" y2="46" stroke="#8a7f66" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <line x1="59" y1="58.5" x2="73" y2="55" stroke="#8a7f66" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <line x1="59" y1="67.5" x2="73" y2="64" stroke="#8a7f66" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <!-- Spine seam -->
+    <line x1="54" y1="40" x2="54" y2="80" stroke="#164e3f" stroke-width="1.5"/>
+  </g>
+  <!-- Mini Audio Note Badge -->
+  <circle cx="84" cy="82" r="10" fill="#f8c830"/>
+  <path d="M82 86 L82 78 L87 77 L87 84" fill="none" stroke="#0e382d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="80.5" cy="86" r="2" fill="#0e382d"/>
+</svg>
