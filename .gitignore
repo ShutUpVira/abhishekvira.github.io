@@ -1,0 +1,6 @@
+# Local audio master files (large WAV masters)
+Music/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
