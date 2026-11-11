@@ -918,9 +918,35 @@
     }
     .apk-desc {
       font-size: 13.5px;
-      line-height: 1.6;
+      line-height: 1.55;
       color: #3b5045;
+      margin: 0 0 12px;
+      font-weight: 500;
+    }
+    .apk-points-list {
+      list-style: none;
+      padding: 0;
       margin: 0 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .apk-point-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font: 500 13px/1.45 var(--sans);
+      color: #2c3e35;
+    }
+    .apk-point-bullet {
+      color: #0e6e5e;
+      font-weight: 700;
+      font-size: 11px;
+      line-height: 1.6;
+      flex-shrink: 0;
+    }
+    .apk-point-text {
+      flex: 1;
     }
     .apk-btn {
       display: inline-flex;
@@ -1616,8 +1642,14 @@ const D = {
         filename: 'FocusLaunchV1.apk',
         apkUrl: 'APKs/FocusLaunchV1.apk',
         image: 'Assets/Lab/focuslaunch.svg',
-        desc: "Engineered for productivity maxing. Focus Launch blocks distracting apps and presents a minimalist dashboard showing your critical tasks—blocked apps remain locked until pending tasks are done. Also automatically closes Instagram every 1 minute to break the scrolling cycle.",
-        features: ['Productivity Maxing', 'App Blocker', 'Minimalist Task View', 'Auto-Close Instagram (1 Min)'],
+        desc: 'Minimalist Android launcher engineered for productivity maxing and distraction blocking.',
+        points: [
+          'Minimalist home launcher replacing addictive app grids',
+          'Blocks distracting apps until all daily tasks are completed',
+          'Automatically closes Instagram after 1 minute to break scrolling',
+          'Nightly 10 PM planning prompt to set goals with midnight rollover'
+        ],
+        features: ['Productivity Maxing', 'App Blocker', 'Task Dashboard', '1-Min Instagram Limit'],
         icon: '🎯'
       },
       {
@@ -1628,8 +1660,14 @@ const D = {
         filename: 'ReadStreakV3.apk',
         apkUrl: 'APKs/ReadStreakV3.apk',
         image: 'Assets/Lab/readstreak.svg',
-        desc: "ReadStreak is an app that helps you read EPUBs. It also uses Google's text-to-speech engine to read your book aloud to you as an audiobook.",
-        features: ['EPUB Reader', 'Google Text-to-Speech', 'Audiobook Mode', 'Offline First'],
+        desc: 'Habit-building EPUB reader with integrated text-to-speech audiobooks.',
+        points: [
+          'Lets you import and read EPUB books with zero clutter',
+          'Reads your books aloud using Google text-to-speech',
+          'Daily reminders and streak keeping to stay consistent',
+          'Detailed stats page on reading habits to keep you motivated'
+        ],
+        features: ['EPUB Reader', 'Text-to-Speech', 'Daily Reminders', 'Reading Stats'],
         icon: '📚'
       },
       {
@@ -1640,8 +1678,14 @@ const D = {
         filename: 'StringTuner.apk',
         apkUrl: 'APKs/StringTuner.apk',
         image: 'Assets/Lab/stringtuner.svg',
-        desc: 'StringTuner has zero latency and absolutely no ads. I was irritated by the barrage of intrusive ads on GuitarTuna, so I built my own clean, instant alternative.',
-        features: ['Zero Latency', 'No Ads Ever', 'Chromatic Tuner', 'Stage Dark UI'],
+        desc: 'Ultra-fast, ad-free chromatic instrument tuner built for musicians on stage.',
+        points: [
+          'Zero-latency real-time pitch detection algorithm',
+          '100% ad-free with absolutely no paywalls or interruptions',
+          'High-precision visual strobe meter with cent accuracy',
+          'Supports multiple instruments (Guitar, Bass, Uke) & custom tunings'
+        ],
+        features: ['Zero Latency', 'No Ads Ever', 'Chromatic Strobe', 'Custom Tunings'],
         icon: '🎸'
       },
       {
@@ -1652,8 +1696,14 @@ const D = {
         filename: 'ShakeTorch.apk',
         apkUrl: 'APKs/ShakeTorch.apk',
         image: 'Assets/Lab/shaketorch.svg',
-        desc: 'The iconic Motorola shake-to-start torch feature engineered for all Android phones. Uses accelerometer gesture detection to toggle the flashlight with a simple shake—no unlocking needed.',
-        features: ['Shake to Toggle', 'Motorola Torch Gesture', 'Accelerometer Detection', 'All Android Phones'],
+        desc: "Motorola's iconic double-chop torch gesture engineered for any Android phone.",
+        points: [
+          'Iconic Motorola shake-to-start torch feature for all Android phones',
+          'Instant flashlight toggle without unlocking screen or touching display',
+          'Background accelerometer service with smart shake calibration',
+          'Subtle haptic vibration feedback on every torch state change'
+        ],
+        features: ['Shake to Toggle', 'Motorola Gesture', 'Pocket Safe', 'Haptic Feedback'],
         icon: '🔦'
       }
     ],
@@ -2163,8 +2213,18 @@ const P = {
                 </div>
               </div>
             </div>
-            <p class="apk-desc">${esc(apk.desc)}</p>
-            <div style="margin-bottom:16px">
+            ${apk.desc ? `<p class="apk-desc">${esc(apk.desc)}</p>` : ''}
+            ${apk.points && apk.points.length ? `
+              <ul class="apk-points-list">
+                ${apk.points.map(pt => `
+                  <li class="apk-point-item">
+                    <span class="apk-point-bullet">✦</span>
+                    <span class="apk-point-text">${esc(pt)}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            ` : ''}
+            <div style="margin-top:auto;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:5px">
               ${apk.features.map(f => `<span class="tag-chip">${esc(f)}</span>`).join('')}
             </div>
             <a class="apk-btn" href="${esc(apk.apkUrl)}" download="${esc(apk.filename)}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;text-align:center">
